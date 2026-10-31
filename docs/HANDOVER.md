@@ -10,7 +10,8 @@
 - 仓库根：`donghan-guyin/`，当前根目录检出的是 **`main`**
 - 本分支的工作树：**`donghan-guyin/.wt-feat-phon/`** ← 所有开发都在这里
 - 分支：`feat/historical-phonology-foundation`
-- 状态：**已与 `origin` 同步**（2026-10-31 推送至 `60813d7`，共 82 提交）
+- 状态：82 提交已推送 `origin`（截至 2026-10-31）；**2026-11-03 新增 2 提交待推送**：
+  `1758fe4`（CI：先装音韵测试依赖再跑套件）+ `dae94c1`（仓库引用统一为 donghan-guyun）
 - 仓库已改名为 **`donghan-guyun`**：origin 现为
   `https://github.com/liu-1101B/donghan-guyun.git`（本地 remote 已更新；旧 URL
   `donghan-guyin` 会 301 重定向但仍可用）
@@ -18,6 +19,25 @@
   临时 PAT（一次性 `git push https://x-access-token:<PAT>@github.com/...`，
   勿写入 config，用完即吊销）。直连 github.com:443 通但链路不稳，push 失败时
   重试几次即可（勿配注册表里陈旧的 127.0.0.1:7897 代理，端口没在监听）
+- ⚠️ **2026-11-03 推送发现**：一次性 PAT `ghp_qpaG…` 认证有效，但**缺 `workflow` scope**，
+  GitHub 拒绝任何包含 `.github/workflows/*` 变更的推送（报错原文：
+  “refusing to allow a Personal Access Token to create or update workflow …
+  without `workflow` scope”）。待推提交里含 workflow 变更，因此**下一个一次性 PAT 必须带**：
+  classic = `repo` + `workflow`；或 fine-grained = “Contents: read and write” +
+  “Workflows: read and write”。
+- **sinica 索引缓存 / 沙箱边界（2026-11-03）**：`language/history/sinica_ccr_data.py`
+  把索引构建写到进程 tempdir（约 197 MB，按源数据 sha 命名
+  `donghan_sinica_ccr_<sha24>.sqlite3`）。本沙箱子进程无法重建：TMP/TEMP 被剥掉
+  （tempdir 落到 CWD=工作树）、AppData 写被拒、且对 >~12MB 已提交数据建索引
+  报 sqlite CANTOPEN（**本地沙箱假象**，CI 的 Linux /tmp 与真机不受影响）。
+  已把 2026-10-30 构建的有效缓存（源 sha 与当前数据文件一致，378,214 行）预置在
+  **工作树根**同名文件；`.gitignore` 已忽略 `donghan_sinica_ccr_*.sqlite3*` 与
+  `jieba.cache`。**不要删工作树根的 196MB 缓存文件**（本地测试靠它）；若数据文件
+  sha 变化，需在沙箱外重建或从真机拷贝。
+- **CI 轻量依赖集**：`requirements-phonology-tests.txt`（5 个包：
+  opencc-python-reimplemented / pypinyin / jieba≥0.42 / numpy / scipy，逐包有理由注释；
+  qieyun 故意不含——其测试自跳过）。干净 venv 验证 132 项全过（1 个 qieyun 自跳过）。
+  根 `requirements.txt`、`requirements-robot.txt` 已补 opencc / jieba。
 - 工作区约定：`run_feat_tests.py`（工作树根，未跟踪，测试运行器，**保留**）
 
 ## 二、运行环境（照抄即可）
