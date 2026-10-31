@@ -11,7 +11,7 @@
 | 系统 | L4T R39.2.1 (JetPack 6.x), Ubuntu 24.04, aarch64 |
 | Python | 3.12.3，项目 venv `.venv` |
 | 音频栈 | PipeWire + **WirePlumber 0.4.17**（用户级服务 `wireplumber.service`）+ bluez |
-| 代码 | `/home/lab006/.dsh/ungrouped/deepdive/donghan-guyin`（git: liu-1101B/donghan-guyin） |
+| 代码 | `/home/lab006/.dsh/ungrouped/deepdive/donghan-guyin`（git: liu-1101B/donghan-guyun；旧名 donghan-guyin 由 GitHub 301 重定向） |
 | 界面 | Streamlit `robot/app.py`，端口 8501 |
 | 本地 LLM | llama-server `127.0.0.1:8080`（Qwen3-30B-A3B gguf） |
 | TTS | Edge TTS（代理 `127.0.0.1:7897` 不稳定，有直连回退） |

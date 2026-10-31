@@ -16,7 +16,7 @@
 ## 项目结构
 
 ```
-donghan-guyin/
+donghan-guyun/
 ├── guyun_app.py              # 主界面 (Streamlit)
 ├── phonology_db.py           # 东汉音韵数据库 (700+ 字)
 ├── classical_translator.py   # 白话→古文翻译引擎
