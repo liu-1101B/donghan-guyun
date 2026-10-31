@@ -1,0 +1,38 @@
+# 历史音韵模块（language/history/ + 学者拟音 TTS）单元测试的最小依赖
+#
+# 供 .github/workflows/historical-phonology-tests.yml 使用：
+#   python -m pip install -r requirements-phonology-tests.txt
+#   python -m unittest discover -s tests -p "test_historical_phonology.py" -v
+#
+# 刻意不含 sherpa-onnx / vosk / sounddevice / streamlit / edge-tts 等机器人
+# 与网页组件——测历史音韵不应要求整台机器人的环境。
+# 计算方式：对 tests/test_historical_phonology.py 做导入闭包分析
+# （2026-10-31，见 docs/HANDOVER.md「CI 依赖」节）。
+#
+# opencc-python-reimplemented
+#   language/history/eastern_mc_correspondence.py 顶层硬导入 OpenCC(s2t)；
+#   language/polyphone.py 的 to_traditional 亦用（缺失时降级为原字）。
+# pypinyin
+#   language/ancient_tts.py 旧路径拼音近似 + language/polyphone.py 词级选音
+#   的现代声调（1/2→平、3→上/入、4→去/入）。测试断言依赖其真实行为。
+# jieba
+#   language/polyphone.py 分词（select_reading / word_tone / segment）。
+#   缺失时代码降级为逐字，但 test_segment_uses_jieba 等断言会失败，
+#   故测试环境必须安装。固定 >=0.42：镜像源里的 jieba 0.21 是
+#   Python 2 时代的毒包（import 即崩），勿装旧版。
+# numpy / scipy
+#   sound_synth.py 顶层 import numpy；共振峰回退路径（无 eSpeak-ng 时）
+#   用 scipy.signal 的 lfilter/butter/sosfilt。CI 的 ubuntu-latest 自带
+#   espeak-ng 时走 eSpeak 路径，但缺 espeak-ng 的 runner 会走共振峰，
+#   两条路径都要绿，所以 scipy 列为必需。
+#
+# 未列入：qieyun（PyPI 包名，导入名 Qieyun）——仅
+# test_parser_matches_qieyun_canonical_fields 使用，且该测试在 Qieyun 未
+# 安装时 self.skipTest，故保持轻量不装；需要本地全量对账时再装
+# （装完需按 requirements.txt 中 networkx np.float_ 补丁说明处理）。
+
+opencc-python-reimplemented>=0.1.0
+pypinyin>=0.50.0
+jieba>=0.42
+numpy>=1.24.0
+scipy>=1.10.0

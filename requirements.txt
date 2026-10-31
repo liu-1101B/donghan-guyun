@@ -29,5 +29,14 @@ gtts>=2.5.0
 qieyun>=0.13.0
 pypinyin>=0.50.0
 
+# 历史音韵模块（language/history/ + 学者拟音 TTS + 多音字选音）
+# opencc：language/history/eastern_mc_correspondence.py 顶层硬导入（s2t），
+# services/llm_client.py 翻译查表亦用；缺失则整个 language.history 导入失败。
+# jieba：language/polyphone.py 词级选音分词；固定 >=0.42——镜像源里的
+# jieba 0.21 是 Python 2 毒包（import 即崩），勿装旧版。
+# 轻量测试环境见 requirements-phonology-tests.txt（CI 历史音韵工作流用）。
+opencc-python-reimplemented>=0.1.0
+jieba>=0.42
+
 # services/llm_client.py 使用，language.turn_engine 经其间接依赖
 httpx>=0.24.0

@@ -20,3 +20,8 @@ nv-bluetooth-service.conf.bak
 .server.log
 .robot_preferences.json
 .robot_preferences.json.tmp
+
+# sinica CCR 索引构建产物（tempdir 可能落在仓库内，勿提交 ~190MB 的 sqlite）
+donghan_sinica_ccr_*.sqlite3
+donghan_sinica_ccr_*.sqlite3.*
+jieba.cache

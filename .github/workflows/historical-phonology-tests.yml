@@ -6,11 +6,17 @@ on:
       - feat/historical-phonology-foundation
     paths:
       - "language/history/**"
+      - "language/ancient_tts.py"
+      - "language/polyphone.py"
+      - "language/phoneme_capability.py"
+      - "sound_synth.py"
       - "scripts/**"
       - "tests/test_historical_phonology.py"
       - "guyun_app.py"
       - "data/historical/**"
       - "docs/HISTORICAL_PHONOLOGY*.md"
+      - "requirements-phonology-tests.txt"
+      - ".github/workflows/historical-phonology-tests.yml"
       - "README.md"
   pull_request:
 
@@ -22,6 +28,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install test dependencies
+        # 历史音韵测试的最小第三方依赖（opencc/pypinyin/jieba/numpy/scipy）。
+        # 此前工作流直接跑 unittest，runner 上没有这些包，测试在导入阶段
+        # 就 ModuleNotFoundError（opencc）——见 requirements-phonology-tests.txt
+        # 头部的闭包分析说明。
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-phonology-tests.txt
       - name: Compile Python sources
         run: python -m compileall -q language/history scripts guyun_app.py
       - name: Run historical phonology tests

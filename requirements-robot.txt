@@ -20,6 +20,10 @@ miniaudio>=1.60
 edge-tts>=6.0.0
 opencc-python-reimplemented>=0.1.0
 
+# 词级选音（language/polyphone.py，robot/app.py 经 turn_engine 间接使用）
+# 固定 >=0.42：镜像源里的 jieba 0.21 是 Python 2 毒包，勿装旧版
+jieba>=0.42
+
 # 网页使用界面（robot/app.py，风格对齐原项目 guyun_app.py）
 streamlit>=1.28.0
 
