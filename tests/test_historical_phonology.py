@@ -776,6 +776,28 @@ class PolyphoneSelectionTests(unittest.TestCase):
         self.assertEqual(xing[0][1], "ɣɐŋ")
         self.assertEqual(xing[0][2], "empirical")
 
+    def test_text_to_ipa_context_offset_maps_by_char(self):
+        # context≠classical：字位不与 context 词位对齐，须按「该字在
+        # context 中首次出现所在的词」（与 word_tone 隐式路径同口径），
+        # 不能按 context 同位置取词（否则「行」会借到「他」的声调）。
+        r = text_to_ipa("行", system_id="karlgren_mc", context="他在行走")
+        xing = [s for s in r.selections if s[0] == "行"]
+        self.assertEqual(len(xing), 1)
+        self.assertEqual(xing[0][1], "ɣɐŋ")
+        self.assertEqual(xing[0][2], "empirical")
+        self.assertIn("词「行走」", xing[0][3])
+
+    def test_text_to_ipa_context_without_classical_falls_back(self):
+        # context 不含 classical 的字：回退单字常读，不得按 context
+        # 同位置取词（旧实现会得到「词中找不到目标字」）。
+        r = text_to_ipa("银行", system_id="wangli_mc",
+                        context="今天天气不错")
+        xing = [s for s in r.selections if s[0] == "行"]
+        self.assertEqual(len(xing), 1)
+        self.assertEqual(xing[0][1], "ɣɑŋ")
+        self.assertEqual(xing[0][2], "fallback_first")
+        self.assertIn("按单字常读", xing[0][3])
+
     def test_text_to_ipa_xingzou_karlgren(self):
         r = text_to_ipa("行走", system_id="karlgren_mc")
         self.assertEqual(r.characters[0], ("行", "ɣɐŋ", "covered"))

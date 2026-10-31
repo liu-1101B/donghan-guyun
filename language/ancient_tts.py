@@ -127,21 +127,33 @@ def text_to_ipa(classical: str, system_id: Optional[str] = None,
     用 jieba 分词 + pypinyin 词级声调 + 广韵地位经验映射（language.polyphone）
     选定一条行；不可判定时按首条回退并在 ``selections`` 中写明原因。
     context 给定时作为分词/声调的上下文，缺省用 classical 自身。
+    context 与 classical 相同（或缺省）时逐字位置取所在词；
+    context 是另一段文本时，字位与词位不对齐，改取「该字在 context
+    中首次出现所在的词」（与 word_tone 隐式路径同口径），
+    字不在 context 中则回退单字常读。
     旧路径（legacy）与单行字行为完全不变。
     """
     mode = _resolve_synthesis_system(system_id)
     ipa_parts, unknown, chars, selections = [], [], [], []
     coverage = approx = 0
     ctx = context if context else classical
-    # 预切分一次，逐字映射到所在词（避免 O(n²) 分词）
+    # 预切分一次（避免 O(n²) 分词）：
+    # - context==classical（或缺省）：逐字位置映射到所在词（逐出现位置，
+    #   同一字在不同词中取各自所在词）；
+    # - context≠classical：classical 的字位与 context 的词位不对齐，
+    #   改按「该字在 context 中首次出现所在的词」——与 word_tone 的
+    #   隐式路径（word=None）同一口径，字不在 context 中时回退单字。
     word_at = {}
+    char_word = {}
     if mode != "legacy":
         from language.polyphone import segment
         pos = 0
         for w in segment(ctx):
-            for i, _c in enumerate(w):
+            for i, c in enumerate(w):
                 word_at[pos + i] = w
+                char_word.setdefault(c, w)
             pos += len(w)
+    same_ctx = (context is None) or (context == classical)
     for i, ch in enumerate(classical):
         if ch in '。！？':
             ipa_parts.append('.')
@@ -169,7 +181,8 @@ def text_to_ipa(classical: str, system_id: Optional[str] = None,
                 ipa_parts.append(data['ipa'])
             else:
                 from language.polyphone import select_reading
-                sel = select_reading(ch, ctx, mode, word=word_at.get(i))
+                word = word_at.get(i) if same_ctx else char_word.get(ch)
+                sel = select_reading(ch, ctx, mode, word=word)
                 if sel.selected is not None:
                     coverage += 1
                     chars.append((ch, sel.selected.ipa, 'covered'))
