@@ -1,6 +1,6 @@
 # 交接说明（给下一个会话／模型）
 
-> 更新时间：2026-10-30　分支：`feat/historical-phonology-foundation`
+> 更新时间：2026-11-03　分支：`feat/historical-phonology-foundation`
 
 新会话接手时，先读这一页，再读 [`docs/v5-goal.md`](v5-goal.md)（六阶段路线与逐阶段差距）
 和 [`docs/HISTORICAL_PHONOLOGY_ARCHITECTURE.md`](HISTORICAL_PHONOLOGY_ARCHITECTURE.md)（数据与引擎架构）。
@@ -10,8 +10,11 @@
 - 仓库根：`donghan-guyin/`，当前根目录检出的是 **`main`**
 - 本分支的工作树：**`donghan-guyin/.wt-feat-phon/`** ← 所有开发都在这里
 - 分支：`feat/historical-phonology-foundation`
-- 状态：82 提交已推送 `origin`（截至 2026-10-31）；**2026-11-03 新增 2 提交待推送**：
+- 状态：82 提交已推送 `origin`（截至 2026-10-31）；**2026-11-03 新增 5 提交待推送**：
   `1758fe4`（CI：先装音韵测试依赖再跑套件）+ `dae94c1`（仓库引用统一为 donghan-guyun）
+  + `3ad1727`（HANDOVER：CI 依赖 / 改名 / 推送失败记录）
+  + `804db34`（逐音素合成验证报告 + 185 行多音字核验集）
+  + `0e8ce5e`（修 context≠classical 时 word_at 错位 + 2 项回归测试）
 - 仓库已改名为 **`donghan-guyun`**：origin 现为
   `https://github.com/liu-1101B/donghan-guyun.git`（本地 remote 已更新；旧 URL
   `donghan-guyin` 会 301 重定向但仍可用）
@@ -77,7 +80,7 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
    它们是死重量，`import numpy/scipy` 永远解析到 `.libs_guyun2`，不要试图再删，
    也不要让 `.libs_guyun` 排在 `.libs_guyun2` 前面。
 4. **跑测试要用工作树根的 `run_feat_tests.py`**（现跑 `test_historical_phonology.py`
-   + `test_llm_provider.py`，154 项全绿；robot 冒烟 `tests/test_robot_app_smoke.py`
+   + `test_llm_provider.py`，156 项全绿；robot 冒烟 `tests/test_robot_app_smoke.py`
    不在其中，要单独跑）
    原生 `python -m unittest` 会有 5 项假失败——沙箱拒绝写入 `tempfile.mkdtemp()`
    创建的 `0o700` 目录，该脚本把 `0o700` 重映射为 `0o707`。
@@ -259,6 +262,34 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
   映射/接线 7）；`run_feat_tests.py` **154 项全绿**（132+22）；robot 冒烟 3 项全绿；
   `scripts/smoke_app.py` 6 个 selectbox 正常。
 
+### 逐音素合成验证报告 ✅ 已完成（2026-11-03，`804db34` + `0e8ce5e`）
+
+- 评审要求：**「有音频输出」≠成功**——引擎会静默丢弃或替换个别音素。
+  `scripts/phoneme_verification_report.py`（只读、可重跑）对 11 家学者体系 +
+  legacy 703 字表，按冻结探针矩阵聚合逐音素 eSpeak/formant 能力，并对
+  12 句公有领域文言跑生产 `text_to_ipa` 选音路径，产出：
+  - `docs/reports/phoneme_verification/REPORT.md`（逐体系级别分布
+    full/approx/partial/untested/silent + 逐音素丢失矩阵含示例字）；
+  - `polyphone_verification.csv`（**185 行**：37 `empirical` = 当前数据规则下的
+    **经验性选择，非学者确认**；148 `fallback_first` 逐行写明卡因；
+    末尾两列空列预留人工核验）；`summary.json`（机器可读统计）；
+  - 完整候选表 72,045 行约 5MB 可重跑再生 → **gitignore 不入库**。
+- 关键数字：`lifanggui_oc` 100% full（11160/11160、0 缺字、0 silent）；
+  全部体系 untested=0 / silent=0（冻结矩阵覆盖全部符号）；wangli_mc
+  partial 4433 读法 = 7 个不可发音声母（ɣ/ȶ/tʃ/ȡ/ʃ/ɽ/dʒ），每读法恰丢 1 token；
+  approx（如 `̌` 组合长音符号）只保证「有声」，不保证听感正确。
+- 顺带修复（`0e8ce5e`）：`text_to_ipa(context=...)` 中 `context≠classical`
+  时 word_at 按字位映射到 context 同位词（借错词声调；字不在 context 时
+  变「词中找不到目标字」）。现改按「该字在 context 中首次出现所在的词」
+  （与 `word_tone` 隐式路径同口径），字不在 context 回退单字常读；
+  `context==classical`（含缺省）与 legacy 行为不变，+2 项回归测试钉住。
+- Windows 回归（本分支动过 robot/app.py、services/llm_client.py、
+  language/turn_engine.py）：`run_feat_tests.py` **156 项全绿**
+  （134 音韵 + 22 LLM；断网 LLM 回退日志为预期）、
+  `tests/test_robot_app_smoke.py` 3/3、`scripts/smoke_app.py` EXIT=0
+  （6 个 selectbox）。**Jetson 真机链路本机无法运行**，需真机按
+  v5-goal.md 第五阶段清单回归。
+
 ### 下一阶段（第四阶段余下，用户已定顺序）
 
 - ✅ ① 一句话多时期音频对照（东汉 / 中古 / 现代同句三版）——已完成；
@@ -275,6 +306,7 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
 | 东汉音 IPA（703 字，legacy 路径） | ✅ |
 | 11 家学者拟音逐字合成 | ✅ eSpeak 出声，双列对照 UI |
 | 多音字词级选音（学者体系，标注 dict vs 经验回退） | ✅ `language/polyphone.py`，empirical/fallback_first 双态 + 卡因说明 |
+| 逐音素合成验证报告（逐音素级别 + 多音字核验集） | ✅ `scripts/phoneme_verification_report.py`，185 行核验集（empirical 为经验性选择，非学者确认） |
 | 东汉→中古音类对应表 | ✅ 493/703 锚定，526 对，30 母/58 韵粒度，`scripts/correspondence_report.py` |
 | 古韵合成 eSpeak | ✅ 32540 采样点 / 1.48s |
 | Edge TTS 现代朗读 | ✅ MP3 |
