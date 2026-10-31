@@ -3,6 +3,15 @@
 > 路线提出：刘佳祺　记录：2026-10-30　适用分支：`feat/historical-phonology-foundation`
 >
 > 本文取代此前草稿，是 v5 的正式阶段划分。每阶段下方的「现状」均为代码盘点结论，不是规划措辞。
+>
+> **2026-11-03 用户决定：v5 优先面向 Windows 用户。** 影响：
+> ① CI 同时覆盖 Windows + Linux（`historical-phonology-tests.yml` matrix）；
+> ② 第五阶段 Jetson 真机链路**不再是 v5 完成判据**，降为可选项（Windows 侧
+>    `robot/windows_audio.py` + `scripts/smoke_app.py` 冒烟为主路径）；
+> ③ 第六阶段打包以 Windows 路径优先（`packaging/build.bat` + eSpeak-ng 1.52.0
+>    Windows 官方构建——与冻结探针矩阵 `language/phoneme_capability.py` 所用
+>    eSpeak-ng 1.52 同版本；若升级 eSpeak-ng 须重跑探针矩阵）；Jetson Linux
+>    路径保留但为次级。
 
 ## 路线总览
 
@@ -217,9 +226,12 @@
 - 无连续对话（唤醒词 / 打断 / 抢话处理）
 - 发声模式只有「自然 / 古韵」两种，未与第一阶段的时期体系联动
 
-**下一步**
+**下一步**（2026-11-03 调整：v5 优先 Windows 用户）
 
-列真机回归清单（蓝牙配对、A2DP sink、音量、断连重连），再做打断与连续对话。
+主路径改为 **Windows 侧语音链路**：`robot/windows_audio.py`（设备选择 / 播放）+
+`scripts/smoke_app.py` 无头冒烟，已由 CI 的 windows-latest 腿持续覆盖。
+Jetson AGX Orin + 蓝牙音箱真机链路（蓝牙配对、A2DP sink、音量、断连重连）**降为可选项**，
+不再是 v5 完成判据——有真机窗口时再执行清单。打断 / 唤醒词等连续对话仍按 Windows 主路径推进。
 
 ---
 
@@ -245,7 +257,10 @@
 1. 结构化日志（级别 + 模块前缀），替换散落的 print；
 2. 把本轮的 11 项手测固化成自动化冒烟（音频、ASR、LLM 可用 mock）；
 3. CI 加依赖断言：`Qieyun` 可导入、`pyarrow/numpy/scipy` 版本匹配；
-4. 收口根目录与 `packaging/` 的分叉（`sound_synth.py` 已经分叉过）。
+4. 收口根目录与 `packaging/` 的分叉（`sound_synth.py` 已经分叉过）；
+5. 打包以 Windows 优先（v5 决策）：`packaging/build.bat` + eSpeak-ng 1.52.0 Windows
+   官方构建作为 v5 交付形态，v5 完成判据 5（新机器按 README 从零装到可用）在
+   Windows 上落实；Jetson Linux 路径保留但为次级。
 
 ---
 

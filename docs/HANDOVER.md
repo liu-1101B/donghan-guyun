@@ -287,15 +287,18 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
   language/turn_engine.py）：`run_feat_tests.py` **156 项全绿**
   （134 音韵 + 22 LLM；断网 LLM 回退日志为预期）、
   `tests/test_robot_app_smoke.py` 3/3、`scripts/smoke_app.py` EXIT=0
-  （6 个 selectbox）。**Jetson 真机链路本机无法运行**，需真机按
-  v5-goal.md 第五阶段清单回归。
+  （6 个 selectbox）。**Jetson 真机链路本机无法运行**；且 2026-11-03
+  用户决定 **v5 优先面向 Windows 用户**（v5-goal.md 顶部有记录），
+  Jetson 真机回归已降为可选项、不再是 v5 完成判据。
 
 ### 下一阶段（第四阶段余下，用户已定顺序）
 
 - ✅ ① 一句话多时期音频对照（东汉 / 中古 / 现代同句三版）——已完成；
 - ✅ ② 翻译层词典未命中时接 LLM（宁可不答不编造，标注 dict vs LLM）——已完成；
 - ✅ ③ 多音字按词切分选音——已完成（jieba + pypinyin + 经验地位映射，见上）；
-- Jetson 真机链路回归清单（见 v5-goal.md 第五阶段）。
+- ~~Jetson 真机链路回归清单~~（2026-11-03 起 **降为可选**：v5 优先面向
+  Windows 用户，Jetson 不再是 v5 完成判据；有真机窗口时再按 v5-goal.md
+  第五阶段清单执行）。
 
 ## 四、已验证可用的能力（2026-10-30 实测）
 

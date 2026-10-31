@@ -22,7 +22,19 @@ on:
 
 jobs:
   test-historical-phonology:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # v5 优先面向 Windows 用户（2026-11-03 用户决定）：CI 同时覆盖
+        # Windows 与 Linux，两腿依赖相同（requirements-phonology-tests.txt
+        # 五个包在 Windows 均有官方 wheel / 纯 Python 实现）。
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      # Windows 控制台默认 GBK，无法编码 ɣɑŋ 这类 IPA 字符；
+      # 统一强制 UTF-8（Linux 腿无副作用）。
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
