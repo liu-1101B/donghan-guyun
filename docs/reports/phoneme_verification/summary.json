@@ -1,0 +1,433 @@
+{
+  "generated": "2026-10-31",
+  "script": "scripts/phoneme_verification_report.py",
+  "systems": {
+    "wangli_mc": {
+      "name": "王力系統",
+      "characters": 19523,
+      "readings": 25495,
+      "no_ipa_records": 13,
+      "espeak": {
+        "full": 11317,
+        "approx": 9745,
+        "partial": 4433,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 12970,
+        "partial": 12525,
+        "silent": 0
+      },
+      "tokens": 45,
+      "token_counts": {
+        "silent": 4433,
+        "approx": 13483,
+        "untested": 0,
+        "ok": 88983
+      },
+      "polyphone_chars": 4769,
+      "selection_rows": 19,
+      "method_count": {
+        "empirical": 4,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "dongtonghe_mc": {
+      "name": "董同龢系統",
+      "characters": 19534,
+      "readings": 25515,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 19895,
+        "approx": 859,
+        "partial": 4761,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 20725,
+        "partial": 4790,
+        "silent": 0
+      },
+      "tokens": 51,
+      "token_counts": {
+        "silent": 4761,
+        "approx": 1110,
+        "untested": 0,
+        "ok": 95756
+      },
+      "polyphone_chars": 4777,
+      "selection_rows": 19,
+      "method_count": {
+        "empirical": 4,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "zhoufagao_mc": {
+      "name": "周法高系統",
+      "characters": 19534,
+      "readings": 25508,
+      "no_ipa_records": 5,
+      "espeak": {
+        "full": 19872,
+        "approx": 0,
+        "partial": 5636,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 20077,
+        "partial": 5431,
+        "silent": 0
+      },
+      "tokens": 44,
+      "token_counts": {
+        "silent": 6009,
+        "approx": 0,
+        "untested": 0,
+        "ok": 89531
+      },
+      "polyphone_chars": 4774,
+      "selection_rows": 19,
+      "method_count": {
+        "empirical": 4,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "lifanggui_mc": {
+      "name": "李方桂系統",
+      "characters": 19529,
+      "readings": 25507,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 9933,
+        "approx": 8492,
+        "partial": 7082,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 10639,
+        "partial": 14781,
+        "silent": 87
+      },
+      "tokens": 44,
+      "token_counts": {
+        "silent": 7481,
+        "approx": 11459,
+        "untested": 0,
+        "ok": 90126
+      },
+      "polyphone_chars": 4774,
+      "selection_rows": 19,
+      "method_count": {
+        "empirical": 4,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "chenxinxiong_mc": {
+      "name": "陳新雄系統",
+      "characters": 19477,
+      "readings": 25409,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 10568,
+        "approx": 10129,
+        "partial": 4712,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 12247,
+        "partial": 13162,
+        "silent": 0
+      },
+      "tokens": 47,
+      "token_counts": {
+        "silent": 4713,
+        "approx": 12574,
+        "untested": 0,
+        "ok": 94768
+      },
+      "polyphone_chars": 4750,
+      "selection_rows": 19,
+      "method_count": {
+        "empirical": 4,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "karlgren_mc": {
+      "name": "高本漢系統",
+      "characters": 6471,
+      "readings": 7672,
+      "no_ipa_records": 1,
+      "espeak": {
+        "full": 2889,
+        "approx": 3781,
+        "partial": 1002,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 3101,
+        "partial": 4571,
+        "silent": 0
+      },
+      "tokens": 61,
+      "token_counts": {
+        "silent": 1002,
+        "approx": 4994,
+        "untested": 0,
+        "ok": 29319
+      },
+      "polyphone_chars": 1055,
+      "selection_rows": 16,
+      "method_count": {
+        "empirical": 7,
+        "fallback_first": 9,
+        "other": 0
+      }
+    },
+    "karlgren_oc": {
+      "name": "高本漢系統",
+      "characters": 5912,
+      "readings": 6984,
+      "no_ipa_records": 8,
+      "espeak": {
+        "full": 2127,
+        "approx": 2793,
+        "partial": 2064,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 2061,
+        "partial": 4923,
+        "silent": 0
+      },
+      "tokens": 44,
+      "token_counts": {
+        "silent": 2247,
+        "approx": 4959,
+        "untested": 0,
+        "ok": 26545
+      },
+      "polyphone_chars": 945,
+      "selection_rows": 16,
+      "method_count": {
+        "empirical": 5,
+        "fallback_first": 11,
+        "other": 0
+      }
+    },
+    "wangli_oc": {
+      "name": "王力系統",
+      "characters": 6329,
+      "readings": 6953,
+      "no_ipa_records": 8,
+      "espeak": {
+        "full": 2881,
+        "approx": 2753,
+        "partial": 1319,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 3314,
+        "partial": 3638,
+        "silent": 1
+      },
+      "tokens": 42,
+      "token_counts": {
+        "silent": 1320,
+        "approx": 3497,
+        "untested": 0,
+        "ok": 24863
+      },
+      "polyphone_chars": 579,
+      "selection_rows": 12,
+      "method_count": {
+        "empirical": 1,
+        "fallback_first": 11,
+        "other": 0
+      }
+    },
+    "dongtonghe_oc": {
+      "name": "董同龢系統",
+      "characters": 8948,
+      "readings": 11120,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 5138,
+        "approx": 1585,
+        "partial": 4397,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 5266,
+        "partial": 5854,
+        "silent": 0
+      },
+      "tokens": 48,
+      "token_counts": {
+        "silent": 4888,
+        "approx": 3009,
+        "untested": 0,
+        "ok": 41034
+      },
+      "polyphone_chars": 1847,
+      "selection_rows": 14,
+      "method_count": {
+        "empirical": 2,
+        "fallback_first": 12,
+        "other": 0
+      }
+    },
+    "zhoufagao_oc": {
+      "name": "周法高系統",
+      "characters": 10219,
+      "readings": 12849,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 9706,
+        "approx": 0,
+        "partial": 3143,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 11405,
+        "partial": 1444,
+        "silent": 0
+      },
+      "tokens": 27,
+      "token_counts": {
+        "silent": 3421,
+        "approx": 0,
+        "untested": 0,
+        "ok": 52040
+      },
+      "polyphone_chars": 2215,
+      "selection_rows": 17,
+      "method_count": {
+        "empirical": 2,
+        "fallback_first": 15,
+        "other": 0
+      }
+    },
+    "lifanggui_oc": {
+      "name": "李方桂系統",
+      "characters": 9001,
+      "readings": 11160,
+      "no_ipa_records": 0,
+      "espeak": {
+        "full": 11160,
+        "approx": 0,
+        "partial": 0,
+        "untested": 0,
+        "silent": 0
+      },
+      "formant": {
+        "full": 11160,
+        "partial": 0,
+        "silent": 0
+      },
+      "tokens": 24,
+      "token_counts": {
+        "silent": 0,
+        "approx": 0,
+        "untested": 0,
+        "ok": 53558
+      },
+      "polyphone_chars": 1843,
+      "selection_rows": 15,
+      "method_count": {
+        "empirical": 0,
+        "fallback_first": 15,
+        "other": 0
+      }
+    }
+  },
+  "legacy": {
+    "name": "han_eastern_experimental",
+    "characters": 703,
+    "espeak": {
+      "full": 685,
+      "approx": 0,
+      "partial": 18,
+      "untested": 0,
+      "silent": 0
+    },
+    "formant": {
+      "full": 682,
+      "partial": 21,
+      "silent": 0
+    },
+    "tokens": 39,
+    "token_counts": {
+      "silent": 18,
+      "approx": 0,
+      "untested": 0,
+      "ok": 2261
+    }
+  },
+  "sentences": [
+    {
+      "text": "学而时习之，不亦说乎？",
+      "source": "论语·学而"
+    },
+    {
+      "text": "学而不思则罔，思而不学则殆。",
+      "source": "论语·为政"
+    },
+    {
+      "text": "三人行，必有我师焉。",
+      "source": "论语·述而"
+    },
+    {
+      "text": "温故而知新，可以为师矣。",
+      "source": "论语·为政"
+    },
+    {
+      "text": "己所不欲，勿施于人。",
+      "source": "论语·颜渊"
+    },
+    {
+      "text": "关关雎鸠，在河之洲。",
+      "source": "诗经·关雎"
+    },
+    {
+      "text": "桃之夭夭，灼灼其华。",
+      "source": "诗经·桃夭"
+    },
+    {
+      "text": "北冥有鱼，其名为鲲。",
+      "source": "庄子·逍遥游"
+    },
+    {
+      "text": "得道者多助，失道者寡助。",
+      "source": "孟子·公孙丑下"
+    },
+    {
+      "text": "大道之行也，天下为公。",
+      "source": "礼记·礼运"
+    },
+    {
+      "text": "普天之下，莫非王土。",
+      "source": "诗经·小雅·北山"
+    },
+    {
+      "text": "兼相爱，交相利。",
+      "source": "墨子·兼爱中"
+    }
+  ],
+  "polyphone_rows": 185,
+  "candidates_rows": 72045
+}

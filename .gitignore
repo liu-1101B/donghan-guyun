@@ -25,3 +25,6 @@ nv-bluetooth-service.conf.bak
 donghan_sinica_ccr_*.sqlite3
 donghan_sinica_ccr_*.sqlite3.*
 jieba.cache
+
+# 逐音素报告的完整候选表（~5MB，scripts/phoneme_verification_report.py 可再生）
+docs/reports/phoneme_verification/polyphone_candidates.csv
