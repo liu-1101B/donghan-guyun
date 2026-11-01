@@ -36,7 +36,13 @@ import importlib
 # 刷新页面即可生效（无需重启服务）。文件有语法错误时跳过该模块并提示。
 _RELOAD_ORDER = [
     "phonology_db", "sound_synth", "classical_translator",
-    "language.style_prompt", "language.ancient_tts",
+    "language.style_prompt",
+    "language.history.sinica_scholar_data", "language.history.reconstruction",
+    "language.history.qieyun_data", "language.history.phono_ml_data",
+    "language.history.zhongyuan_data", "language.history.sinica_ccr_data",
+    "language.history.eastern_mc_correspondence",
+    "language.polyphone", "language.phoneme_capability",
+    "language.era_audio", "language.ancient_tts",
     "services.llm_client", "services.tts_client", "services.asr_client",
     "language.turn_engine",
     "robot.session", "robot.voice_router", "robot.windows_audio",
@@ -113,6 +119,7 @@ from services.asr_client import (available_backends as asr_available_backends,
 from services import tts_client
 from language.ancient_tts import text_to_ipa, synthesize_ancient
 from language.era_audio import MIDDLE_SYSTEM_DEFAULT, middle_system_label
+from language.history import SCHOLAR_SYSTEMS_ALL
 from phonology_db import lookup_char, EASTERN_HAN_DB
 
 OUT_DIR = os.path.join(ROOT, "audio_out")
@@ -287,12 +294,15 @@ def _wav_levels(path):
 
 # ---------- 后台生成（线程内不碰 Streamlit API，状态写 job 字典） ----------
 def _gen_worker(job, session, cfg):
-    """后台线程：LLM 生成 + 三类语音合成 + 自动朗读，结果只写进 job。
+    """后台线程：LLM 生成 + 多类语音合成 + 自动朗读，结果只写进 job。
 
-    一次生成三段音频（互不干扰，各占独立播放对象）：
-      user      我的话·东汉古韵（文言翻译，无翻译则用原话）
-      reply_anc 回答·东汉古韵
+    一次生成至多四段音频（互不干扰，各占独立播放对象）：
+      user      我的话·古韵（文言翻译，无翻译则用原话）
+      reply_anc 回答·古韵（所选拟音体系，默认东汉官音）
+      reply_mc  回答·中古（对照槽；默认王力，主体系为王力时自动避让董同龢）
       reply_mod 回答·现代汉语（Edge TTS，需网络；失败则该段为空+说明）
+    v5 拟音体系：cfg["system_id"]（None=东汉官音默认；学者体系逐字查
+    Sinica 拟音表，缺字不补现代拼音）作用于 user / reply_anc 两段。
     线程内不碰 st.session_state / st.*（避免跨线程上下文问题），
     所有状态落盘由主线程的轮询 fragment 在 result 就绪时统一完成。
     """
@@ -309,18 +319,32 @@ def _gen_worker(job, session, cfg):
         source = gen.get("source", "local")
         translation_source = gen.get("translation_source", "")
         missed_chars = gen.get("missed_chars") or []
+        # v5 主拟音体系：None = 东汉官音（默认·实验字表）。作用于 user/reply_anc。
+        main_system = cfg.get("system_id")
         middle_system = cfg.get("middle_system") or MIDDLE_SYSTEM_DEFAULT
+        # 三时期对照的中古槽：若主体系恰是某个中古学者体系（如王力中古），
+        # 为避免「中古 vs 中古同体系」自对照无意义，自动避让到另一中古体系。
+        middle_note = ""
+        if main_system and main_system in SCHOLAR_SYSTEMS_ALL:
+            if main_system == middle_system:
+                middle_system = "dongtonghe_mc" if main_system == "wangli_mc" \
+                    else "wangli_mc"
+                middle_note = (
+                    f"主体系 {SCHOLAR_SYSTEMS_ALL[main_system]} 与中古槽重合，"
+                    f"中古槽自动改用 {middle_system_label(middle_system)}")
 
         # 词典无匹配时，不创建虚构回答；只合成输入内容的古汉语翻译。
         user_text = translation or cfg["text"]
 
         def _do_user():
             return "user", synthesize_ancient(
-                user_text, pitch=cfg["pitch"], speed=cfg["speed"])
+                user_text, pitch=cfg["pitch"], speed=cfg["speed"],
+                system_id=main_system)
 
         def _do_reply_anc():
             return "reply_anc", synthesize_ancient(
-                reply, pitch=cfg["pitch"], speed=cfg["speed"])
+                reply, pitch=cfg["pitch"], speed=cfg["speed"],
+                system_id=main_system)
 
         def _do_reply_mc():
             # 中古音（默认王力体系）回答音频：与东汉/现代做三时期对照
@@ -357,6 +381,34 @@ def _gen_worker(job, session, cfg):
         (wav_u, _), (wav_r, result_r), (wav_mc, result_mc), (mp3_m, _) = (
             done["user"], done["reply_anc"], done["reply_mc"],
             done["reply_mod"])
+        # v5 逐字双列对照（数据侧 / 引擎侧）：仅当选择了学者拟音体系。
+        # 与 v3 界面 process_input_scholar 同一套口径：缺字不补拼音，
+        # espeak 丢掉的音素逐字列出，「能读」与「音值对」分开陈述。
+        scholar_rows, scholar_counts, scholar_selections = [], {}, []
+        if main_system and reply and result_r:
+            from language.phoneme_capability import (
+                assess_ipa, ESPEAK_LEVEL_ZH)
+            for ch, ipa, tag in result_r.characters:
+                if tag == "unknown" or not ipa:
+                    scholar_rows.append({"char": ch, "ipa": None,
+                                         "status": "缺字（不补拼音）",
+                                         "cap": "—"})
+                    continue
+                a = assess_ipa(ipa)
+                scholar_counts[a.espeak_level] = (
+                    scholar_counts.get(a.espeak_level, 0) + 1)
+                cap = ESPEAK_LEVEL_ZH.get(a.espeak_level, a.espeak_level)
+                if a.dropped_tokens:
+                    cap += "（丢 " + " ".join(
+                        sorted(set(a.dropped_tokens))) + "）"
+                scholar_rows.append({"char": ch, "ipa": ipa,
+                                     "status": "收录" if tag == "covered"
+                                     else "拼音近似",
+                                     "cap": cap})
+            scholar_selections = [
+                {"char": c, "ipa": ip, "method": m, "note": n}
+                for (c, ip, m, n) in (result_r.selections or ())
+            ]
         if reply and not wav_r:
             source = f"{source}+ancient_fallback"
 
@@ -371,9 +423,25 @@ def _gen_worker(job, session, cfg):
             "mode": cfg["mode"],
             "coverage": result_r.coverage_pct if result_r and wav_r else 0.0,
             "approx": result_r.approx if result_r and wav_r else 0,
+            "system_id": main_system,
+            "system_label": cfg.get("system_label", ""),
+            "middle_note": middle_note,
+            "scholar_rows": scholar_rows,
+            "scholar_counts": scholar_counts,
+            "scholar_selections": scholar_selections,
             "audios": {
                 "user": {"data": wav_u, "kind": "wav", "text": user_text},
-                "reply_anc": {"data": wav_r, "kind": "wav", "text": reply},
+                "reply_anc": {
+                    "data": wav_r, "kind": "wav", "text": reply,
+                    "system": main_system,
+                    "system_label": cfg.get("system_label", ""),
+                    "ipa": result_r.ipa_text if result_r and wav_r else "",
+                    "coverage": result_r.coverage_pct
+                    if result_r and wav_r else 0.0,
+                    "approx": result_r.approx if result_r and wav_r else 0,
+                    "unknown": list(result_r.unknown)
+                    if result_r else [],
+                },
                 "reply_mc": {
                     "data": wav_mc, "kind": "wav", "text": reply,
                     "system": middle_system,
@@ -510,6 +578,344 @@ def analyze_reply(classical: str):
                 rows.append({"char": ch, "ipa": ipa,
                              "tone": "今音", "src": "拼音近似"})
     return rows
+
+
+# ---------- v5 研究面板（移植自 v3 界面：独立研究视图，不影响对话/合成主流程） ----------
+def _render_phonology_research():
+    """历史音系探索 / 同字跨体系对照 / 中央研究院 CCR 资料库。
+
+    全部数据为离线捆绑、每条记录可溯源；缺字报缺，不编造值。
+    本区为只读研究视图，不参与翻译与语音合成。
+    """
+    from language.history import (
+        systems_for_period, lookup_reading,
+        lookup_qieyun_positions, lookup_phono_ml, lookup_zhongyuan,
+        compare_character, scholar_coverage,
+        SCHOLAR_SYSTEMS_ALL as SCHOLAR_ALL,
+    )
+    period_labels = {
+        "上古汉语 / 东汉实验区": "old_chinese",
+        "中古汉语 / 《广韵》系": "middle_chinese",
+        "元明时期 / 《中原音韵》": "early_mandarin",
+    }
+
+    # ===== 🧭 历史音系探索（逐字数据库） =====
+    with st.expander("🧭 历史音系探索（逐字数据库）", expanded=False):
+        st.markdown(
+            "按历史时期与学者体系查询已接入的离线数据。这里展示的是韵书记录、"
+            "音韵地位或学者转写，**不等于实际录音**，也不保证能直接用于 TTS。"
+        )
+        selected_period_label = st.selectbox(
+            "历史时期", list(period_labels.keys()),
+            key="historical_explorer_period",
+        )
+        selected_period = period_labels[selected_period_label]
+        systems = systems_for_period(selected_period,
+                                     include_metadata_only=False)
+        if not systems:
+            st.info("该时期暂无可查询的已接入数据。")
+        else:
+            selected_system_id = st.selectbox(
+                "数据 / 拟音方案",
+                [s.id for s in systems],
+                format_func=lambda sid: next(
+                    f"{s.name} · {s.scholar}" for s in systems if s.id == sid
+                ),
+                key="historical_explorer_system",
+            )
+            query_char = st.text_input(
+                "查询单个汉字", value="東", max_chars=1,
+                key="historical_explorer_character",
+            ).strip()
+            if st.button("查询历史音系", key="historical_explorer_lookup"):
+                if not query_char:
+                    st.warning("请先输入一个汉字。")
+                else:
+                    rows = []
+                    source_url = ""
+                    if selected_system_id == "guangyun_qieyun_position":
+                        from language.history.qieyun_data import SOURCE_URL
+                        source_url = SOURCE_URL
+                        for rec in lookup_qieyun_positions(query_char):
+                            rows.append({
+                                "汉字": rec.head_character,
+                                "小韵号": rec.xiaoyun_id,
+                                "反切上字": rec.fanqie_upper,
+                                "反切下字": rec.fanqie_lower,
+                                "音韵地位（原始描述）": rec.position_description,
+                                "数据类型": "韵书音韵地位，不是 IPA",
+                            })
+                    elif selected_system_id == "phono_ml_baxter_sagart_mc":
+                        from language.history.phono_ml_data import SOURCE_URL
+                        source_url = SOURCE_URL
+                        for rec in lookup_phono_ml(query_char):
+                            rows.append({
+                                "汉字": rec.character,
+                                "转写方案": rec.transcription_scheme,
+                                "转写": rec.transcription,
+                                "反切": rec.fanqie,
+                                "音韵地位": rec.phonological_position,
+                                "源条目标识": rec.identifiers,
+                                "数据类型": "Baxter–Sagart 风格转写；非 IPA 音频",
+                            })
+                    elif selected_system_id.startswith("zhongyuan_"):
+                        from language.history.zhongyuan_data import SOURCE_URL
+                        source_url = SOURCE_URL
+                        for rec in lookup_zhongyuan(query_char,
+                                                    selected_system_id):
+                            value = dict(rec.transcriptions).get(
+                                selected_system_id, "")
+                            rows.append({
+                                "汉字": rec.character,
+                                "小韵": rec.xiaoyun,
+                                "声母": rec.initial,
+                                "韵母": rec.final,
+                                "声调": rec.tone,
+                                "学者方案": selected_system_id,
+                                "转写 / 拟音": value,
+                                "数据类型": "《中原音韵》学者方案转写",
+                            })
+                    else:
+                        reading = lookup_reading(query_char,
+                                                 selected_system_id)
+                        source_url = reading.provenance.source_url or ""
+                        rows.append({
+                            "汉字": reading.character,
+                            "体系": reading.system_id,
+                            "记录状态": reading.source_status,
+                            "IPA 字段": reading.ipa or "—",
+                            "音韵地位": reading.phonological_position or "—",
+                            "转写": reading.transcription or "—",
+                            "说明": reading.note,
+                        })
+
+                    if rows:
+                        st.dataframe(rows, use_container_width=True,
+                                     hide_index=True)
+                        if source_url:
+                            st.markdown(
+                                f"数据来源：[查看上游记录 / 数据集]({source_url})")
+                        st.caption(
+                            "多音字会显示该数据集可查到的多条记录。不同学者方案是不同模型，"
+                            "请勿把它们拼接为一个未经说明的“标准古音”。"
+                        )
+                    else:
+                        st.info("该字在所选数据集中没有查到记录。")
+
+    # ===== 🔀 同字跨体系对照（争议项 + 覆盖率） =====
+    with st.expander("🔀 同字跨体系对照（争议项）", expanded=False):
+        st.markdown(
+            "把同一个字在所选时期**全部已接入体系**里的值并排陈列。"
+            "**各体系不可混用**：差异是各方案模型的直接证据；"
+            "缺字、源表缺陷一律如实报出，不用其他体系补值。"
+        )
+        cmp_period_label = st.selectbox(
+            "历史时期", list(period_labels.keys()),
+            key="historical_compare_period",
+        )
+        cmp_period = period_labels[cmp_period_label]
+        cmp_char = st.text_input(
+            "要对照的字", value="融", max_chars=1,
+            key="historical_compare_character",
+        ).strip()
+        if cmp_char:
+            cmp = compare_character(cmp_char, cmp_period)
+            kind_labels = {"ipa": "IPA", "transcription": "转写",
+                           "position": "音韵地位", "none": "—"}
+
+            def _fmt_values(values):
+                """重复值折叠为「v ×n」，条数信息不丢。"""
+                seen, order = {}, []
+                for v in values:
+                    if v not in seen:
+                        order.append(v)
+                    seen[v] = seen.get(v, 0) + 1
+                return " / ".join(
+                    f"{v} ×{seen[v]}" if seen[v] > 1 else v for v in order)
+
+            rows = []
+            for r in cmp.rows:
+                extra = ("；上游備註：" + r.upstream_note) if r.upstream_note else ""
+                rows.append({
+                    "体系": f"{r.system_name}（{r.system_id}）",
+                    "读音 / 转写": _fmt_values(r.values) if r.values else "—",
+                    "值类型": kind_labels[r.value_kind],
+                    "韻部": r.rhyme_group or "—",
+                    "状态": r.source_status,
+                    "说明": (r.note + extra).strip() or "—",
+                })
+            st.dataframe(rows, use_container_width=True, hide_index=True)
+            n_present = len(cmp.system_ids_with_values)
+            if cmp.disagrees:
+                st.markdown(
+                    f"**{len(cmp.distinct_values)} 个不同值**（{n_present} 个体系有值）："
+                    + " / ".join(f"`{v}`" for v in cmp.distinct_values)
+                    + " —— 同一字在各方案下的分歧，各体系不可混用。"
+                )
+            elif n_present:
+                st.markdown(f"{n_present} 个体系有值且一致：`{cmp.distinct_values[0]}`。")
+            else:
+                st.info(f"{cmp_period_label} 的已接入体系里都查不到「{cmp_char}」。")
+            if cmp.system_ids_without_values:
+                missing_names = "、".join(
+                    r.system_name for r in cmp.rows if not r.has_value)
+                st.caption("无记录体系：" + missing_names + "（如实报缺，不编造值）。")
+
+            st.markdown("#### 各体系覆盖率（所选时期）")
+            cov_rows = []
+            for system in systems_for_period(cmp_period,
+                                              include_metadata_only=False):
+                if system.id in SCHOLAR_ALL:
+                    c = scholar_coverage(system.id)
+                    cov_rows.append({
+                        "体系": system.name,
+                        "字数": c["characters"],
+                        "记录": c["records"],
+                        "缺陷行": c["skipped_suspect_initial"],
+                        "空韻母": c["skipped_empty_final"],
+                        "韻部数": c["rhyme_group_count"],
+                        "備註行": c["upstream_note_rows"],
+                        "零声母行": c["zero_initial"] + c["glide_onset"],
+                        "说明": "",
+                    })
+                elif system.id == "han_eastern_experimental":
+                    n = len(EASTERN_HAN_DB)
+                    cov_rows.append({
+                        "体系": system.name, "字数": n, "记录": n,
+                        "缺陷行": "—", "空韻母": "—", "韻部数": "—", "備註行": "—",
+                        "零声母行": "—",
+                        "说明": "项目旧实验字表，来源未逐字审计",
+                    })
+                else:
+                    cov_rows.append({
+                        "体系": system.name, "字数": "—", "记录": "—",
+                        "缺陷行": "—", "空韻母": "—", "韻部数": "—", "備註行": "—",
+                        "零声母行": "—",
+                        "说明": "原始资料/转写数据集，非逐字拟音表（见上方探索器）",
+                    })
+            st.dataframe(cov_rows, use_container_width=True, hide_index=True)
+            st.caption(
+                "覆盖率口径：缺陷行＝源表声母列错位/缺损（保留但不给 IPA）；"
+                "空韻母＝韵母列为空或「?」（不计入）；零声母行＝上游以 0／· 标记无辅音的行。"
+            )
+
+    # ===== 🏛️ 中央研究院古今音资料库 =====
+    with st.expander(
+            "🏛️ 中央研究院古今音资料库（来源可追溯的原始记录）",
+            expanded=False):
+        from language.history.sinica_ccr_data import (
+            dataset_available as sinica_ccr_dataset_available,
+            lookup_sinica_ccr_records,
+            sinica_ccr_record_count,
+        )
+
+        st.markdown(
+            "该模块查询中央研究院／台大官方独立下载的声韵资料。每条结果保留原始工作簿、"
+            "工作表、行号、原始字段及 SHA-256。韵部标签、学者转写和拟音是不同数据类型；"
+            "页面不会把韵部标签自动转换成 IPA。"
+        )
+        if not sinica_ccr_dataset_available():
+            st.warning("当前代码已支持查询，但规范化数据文件尚未放入仓库目录。")
+            st.code(
+                "mkdir -p data/historical/sinica_ccr_import\n"
+                "unzip sinica_ccr_import_bundle.zip -d data/historical/sinica_ccr_import",
+                language="bash",
+            )
+            st.markdown(
+                "将本次提供的 sinica_ccr_import_bundle.zip 解压到上述目录后，重新启动页面即可启用。"
+                "完整数据包包含 26 个工作簿、34 个工作表，共 378,214 条数据记录。"
+            )
+            st.markdown(
+                "[官方授权与来源说明](https://xiaoxue.iis.sinica.edu.tw/ccrdata/) · "
+                "[项目数据说明](data/historical/README.md)"
+            )
+        else:
+            package_labels = {
+                "全部数据集": None,
+                "上古音／两汉": "sinica_ccr_old_chinese",
+                "中古时期": "sinica_ccr_middle_chinese",
+                "历代韵书": "sinica_ccr_rhyme_books",
+            }
+            p1, p2 = st.columns(2)
+            with p1:
+                package_label = st.selectbox(
+                    "资料包", list(package_labels), key="sinica_ccr_package"
+                )
+            with p2:
+                sinica_period_labels = [
+                    "全部时期", "先秦", "西汉", "东汉", "魏", "晋",
+                    "南北朝", "隋唐", "韵书资料",
+                ]
+                period_label = st.selectbox(
+                    "时期／资料类别", sinica_period_labels,
+                    key="sinica_ccr_period",
+                )
+            workbook_keyword = st.text_input(
+                "学者／韵书名称过滤（可留空）",
+                placeholder="例如：王力、董同龢、廣韻、中原音韻",
+                key="sinica_ccr_workbook_keyword",
+            ).strip()
+            c1, c2 = st.columns([1, 2])
+            with c1:
+                sinica_char = st.text_input(
+                    "查询单个汉字", value="東", max_chars=1,
+                    key="sinica_ccr_character",
+                ).strip()
+            with c2:
+                st.caption(
+                    "首次查询会在本机临时目录建立 SQLite 检索索引；原始数据文件不会被修改。"
+                )
+            if st.button("查询古今音资料", key="sinica_ccr_lookup"):
+                if not sinica_char:
+                    st.warning("请先输入一个汉字。")
+                else:
+                    try:
+                        records = lookup_sinica_ccr_records(
+                            sinica_char,
+                            dataset_id=package_labels[package_label],
+                            period=None if period_label == "全部时期"
+                            else period_label,
+                            workbook_keyword=workbook_keyword or None,
+                            limit=200,
+                        )
+                        if records:
+                            rows = []
+                            for rec in records:
+                                rows.append({
+                                    "汉字": rec.character,
+                                    "时期": rec.period,
+                                    "体系／韵书": rec.system,
+                                    "数据类型": rec.record_type,
+                                    "原始字段": "；".join(
+                                        f"{key}={value}"
+                                        for key, value in rec.fields.items()
+                                        if value != ""
+                                    ),
+                                    "来源工作簿": rec.source_workbook,
+                                    "工作表": rec.source_sheet,
+                                    "源行号": rec.source_row,
+                                    "许可标记": rec.license_mark,
+                                    "工作簿 SHA-256": rec.source_workbook_sha256,
+                                })
+                            st.dataframe(rows, use_container_width=True,
+                                         hide_index=True)
+                            st.caption(
+                                f"显示 {len(records)} 条记录（最多 200 条）。"
+                                "结果按源工作簿、工作表和行号排序；多读与异读均保留。"
+                            )
+                            total_count = sinica_ccr_record_count(
+                                dataset_id=package_labels[package_label]
+                            ) if package_labels[package_label] \
+                                else sinica_ccr_record_count()
+                            st.markdown(
+                                f"[查看官方资料库]({records[0].source_url}) · "
+                                f"资料包记录总数：{total_count:,}"
+                            )
+                        else:
+                            st.info(
+                                "该字在当前筛选条件下没有记录。可清除学者／韵书过滤后重试。")
+                    except (FileNotFoundError, ValueError) as exc:
+                        st.error(str(exc))
 
 
 def _bt_healthy() -> bool:
@@ -919,6 +1325,24 @@ with col1:
              index=0 if router.mode == "natural" else 1,
              horizontal=True, label_visibility="collapsed", key="robot_mode")
 
+    # v5 拟音体系：仅东汉古韵模式渲染。默认＝东汉洛阳官音（实验字表）；
+    # 学者体系逐字查 Sinica 拟音表，缺字不补现代拼音（不虚构该体系读音）。
+    _SYNTH_OPTIONS = {"东汉洛阳官音（默认）": None}
+    for _sid, _name in SCHOLAR_SYSTEMS_ALL.items():
+        _era = "上古" if _sid.endswith("_oc") else "中古"
+        _SYNTH_OPTIONS[f"{_name}·{_era}（{_sid}）"] = _sid
+    if st.session_state.get("robot_mode") == "东汉古韵":
+        st.markdown('<div class="gi-h">拟音体系</div>', unsafe_allow_html=True)
+        _sys_choice = st.selectbox(
+            "拟音体系", list(_SYNTH_OPTIONS.keys()),
+            key="robot_system",
+            help=("默认＝东汉洛阳官音（实验字表 703 字）。\n"
+                  "学者体系＝逐字查该体系 Sinica 拟音表，缺字不补现代拼音；\n"
+                  "逐字对照表分「重建状态（数据侧）/ 合成能力（引擎侧）」两列。"))
+        if _SYNTH_OPTIONS.get(_sys_choice):
+            st.caption("所选学者体系缺字不补拼音（不虚构该体系读音）；"
+                       "逐字列出数据侧覆盖与引擎侧合成能力。")
+
     with st.expander("语音设置"):
         _m = st.session_state.get("robot_mode", "自然语音")
         if _m == "自然语音":
@@ -947,6 +1371,14 @@ with col1:
         # 设置控件按当前模式渲染，另一模式的 key 可能未创建 → 用 .get 兜底
         name_to_id = {v[0]: v[1] for v in voices}
         mode = "natural" if ss["robot_mode"] == "自然语音" else "ancient"
+        # v5 拟音体系（自然语音模式不使用学者体系）
+        _sel = ss.get("robot_system")
+        system_id = _SYNTH_OPTIONS.get(_sel) if _sel in _SYNTH_OPTIONS else None
+        if mode == "natural":
+            system_id = None
+        system_label = ("东汉洛阳官音" if system_id is None else
+                        f"{SCHOLAR_SYSTEMS_ALL[system_id]}（"
+                        f"{'上古' if system_id.endswith('_oc') else '中古'}）")
         cfg = {
             "text": text,
             "mode": mode,
@@ -957,6 +1389,8 @@ with col1:
             "rate": f"{int(ss.get('robot_rate', -10)):+d}%",
             "speed": float(ss.get("robot_speed", 1.0)),
             "pitch": int(ss.get("robot_pitch", router.pitch)),
+            "system_id": system_id,
+            "system_label": system_label,
         }
         # 同步 router（供扩展朗读按钮复用当前设置）
         router.set_mode(mode)
@@ -980,7 +1414,9 @@ with col1:
     with st.expander("关于本项目"):
         st.markdown(f"""- 对话模式：大模型 API / 本地词典（可在左侧切换并记住上次选择）
 - 无 API 或 API 不可用时：只使用词典预设应答；未匹配则只朗读输入的古汉语翻译
-- 东汉古韵库：{len(EASTERN_HAN_DB)} 字（郑张尚芳体系，洛阳官音重建）
+- 东汉古韵库：{len(EASTERN_HAN_DB)} 字（郑张尚芳体系，洛阳官音重建，默认拟音体系）
+- v5 拟音体系：另可选 11 套 Sinica 学者拟音体系（上古 5 / 中古 6），逐字查 Sinica 拟音表；缺字不补现代拼音，逐字列出「重建状态（数据侧）/ 合成能力（引擎侧）」
+- 研究面板：历史音系探索器、同字跨体系对照（争议项＋各体系覆盖率）、中央研究院古今音资料库原始记录检索，全部离线数据、来源可溯
 - 自然语音：Edge TTS（需网络，失败时可回退古韵合成）
 - 音频设备：Linux 使用 PipeWire/ALSA，Windows 使用系统音频设备
 - 多轮对话：保留最近 {session.max_turns} 轮有效回答上下文""")
@@ -1086,6 +1522,8 @@ with col2:
             src_name += " · 古韵兜底"
         meta = f'模式 {res["mode"] if res["mode"] == "natural" else "东汉古韵"} · 来源 {src_name}'
         if res["mode"] == "ancient":
+            if res.get("system_id"):
+                meta += f" · {res.get('system_label') or res['system_id']}"
             meta += f' · 古韵覆盖 {res["coverage"]}%'
         if res.get("translation_source") == "llm":
             meta += " · 翻译 LLM"
@@ -1116,12 +1554,13 @@ with col2:
         if st.session_state.get("play_note"):
             st.caption(st.session_state.play_note)
         audios = res.get("audios") or {}
+        _sys_name = res.get("system_label") or "东汉古韵"
         if not res.get("reply"):
             _CARD_ORDER = [("user", "输入翻译 · 古汉语")]
         else:
             _CARD_ORDER = [
-                ("user", "我的话 · 东汉古韵"),
-                ("reply_anc", "回答 · 东汉古韵"),
+                ("user", f"我的话 · {_sys_name}"),
+                ("reply_anc", f"回答 · {_sys_name}"),
                 ("reply_mod", "回答 · 现代汉语"),
             ]
         for key, label in _CARD_ORDER:
@@ -1177,13 +1616,18 @@ with col2:
             st.caption("本轮没有应答（词典未命中）——不生成对照；"
                        "输入翻译的东汉古韵见上方「语音」。")
         else:
+            _anc_item = audios.get("reply_anc") or {}
             _mc_item = audios.get("reply_mc") or {}
+            if res.get("middle_note"):
+                st.caption(res["middle_note"])
+            _anc_label = res.get("system_label") or "东汉官音"
             _era_cols = st.columns(3, gap="small")
-            _r_anc = text_to_ipa(res["reply"])   # 仅查表，与 worker 同源
             _era_specs = (
-                (_era_cols[0], "reply_anc", "东汉（洛阳官音拟音）",
-                 _r_anc.ipa_text, _r_anc.coverage_pct,
-                 list(_r_anc.unknown),
+                (_era_cols[0], "reply_anc",
+                 f"{'东汉（洛阳官音拟音）' if not res.get('system_id') else _anc_label + '（所选体系）'}",
+                 _anc_item.get("ipa", ""),
+                 _anc_item.get("coverage", 0.0),
+                 _anc_item.get("unknown") or [],
                  "合成失败（无有效汉字？）"),
                 (_era_cols[1], "reply_mc",
                  f"中古（{_mc_item.get('system_label') or '王力系统'}）",
@@ -1220,35 +1664,78 @@ with col2:
                         mime=_fmt, use_container_width=True,
                         key=f"dl_era_{_era_key}")
 
-        # 东汉 IPA（古韵模式）
+        # 古韵 IPA（古韵模式；逐字 IPA 由 worker 按所选体系给出，不重算）
         if res["mode"] == "ancient" and res.get("reply"):
-            r = text_to_ipa(res["reply"])
-            st.markdown('<div class="gi-h">东汉洛阳音 IPA</div>',
+            _ipa_item = audios.get("reply_anc") or {}
+            _ipa_text = _ipa_item.get("ipa", "")
+            if not _ipa_text:   # 旧版结果兜底：本地按东汉官音口径查表
+                _ipa_text = text_to_ipa(res["reply"]).ipa_text
+            _ipa_header = (f"{res.get('system_label') or res.get('system_id')} IPA"
+                           if res.get("system_id") else "东汉洛阳音 IPA")
+            st.markdown(f'<div class="gi-h">{_ipa_header}</div>',
                         unsafe_allow_html=True)
-            st.markdown(f'<div class="gi-ipa">{r.ipa_text}</div>',
+            st.markdown(f'<div class="gi-ipa">{_ipa_text or "（无）"}</div>',
                         unsafe_allow_html=True)
 
         # 逐字音韵分析（古韵模式，收进折叠面板）
         if res["mode"] == "ancient" and res.get("reply"):
-            rows = analyze_reply(res["reply"])
-            if rows:
-                with st.expander(f"逐字音韵分析（{len(rows)} 字）"):
+            scholar_rows = res.get("scholar_rows") or []
+            if scholar_rows:
+                # v5 学者体系：逐字双列对照（数据侧重建状态 / 引擎侧合成能力）
+                with st.expander(
+                        f"逐字对照 · {res.get('system_label') or res['system_id']}"
+                        f"（{len(scholar_rows)} 字）"):
+                    from language.phoneme_capability import ESPEAK_LEVEL_ZH
                     trs = []
-                    for a in rows:
-                        tc = (f"tone-{a['tone']}"
-                              if any(t in a["tone"] for t in "平上去入") else "")
-                        tt = f'<span class="tone-tag {tc}">{a["tone"]}</span>'
-                        src_color = "#4a7a5a" if a["src"] == "收录" else "#9a917e"
+                    for a in scholar_rows:
+                        _s = a["status"]
+                        src_color = ("#4a7a5a" if _s == "收录"
+                                     else "#b08a3e" if _s == "拼音近似"
+                                     else "#a63d2a")
                         trs.append(
                             f"<tr><td class=\"ch\">{a['char']}</td>"
-                            f"<td class=\"ipa\">{a['ipa']}</td>"
-                            f"<td>{tt}</td>"
-                            f"<td style=\"color:{src_color};font-size:0.75rem\">{a['src']}</td></tr>")
+                            f"<td class=\"ipa\">{a['ipa'] or '—'}</td>"
+                            f"<td style=\"color:{src_color};font-size:0.75rem\">{_s}</td>"
+                            f"<td style=\"font-size:0.75rem\">{a['cap']}</td></tr>")
                     st.markdown(
                         '<table class="gi-phon"><thead><tr>'
-                        "<th>字</th><th>东汉 IPA</th><th>声调</th><th>来源</th>"
+                        "<th>字</th><th>体系拟音</th>"
+                        "<th>重建状态（数据侧）</th><th>合成能力（引擎侧）</th>"
                         f"</tr></thead><tbody>{''.join(trs)}</tbody></table>",
                         unsafe_allow_html=True)
+                    counts = res.get("scholar_counts") or {}
+                    if counts:
+                        st.caption("引擎侧合成能力：" + "，".join(
+                            f"{ESPEAK_LEVEL_ZH.get(k, k)} {v} 字"
+                            for k, v in sorted(counts.items())))
+                    st.caption(
+                        "缺字不补拼音：「缺字（不补拼音）」＝该体系 Sinica 拟音表无此字，"
+                        "不虚构读音；「拼音近似」＝非该体系收录值，以近似音占位。")
+                    sel_rows = res.get("scholar_selections") or []
+                    if sel_rows:
+                        st.markdown("#### 多音字选音依据")
+                        st.dataframe(sel_rows, use_container_width=True,
+                                     hide_index=True)
+            else:
+                rows = analyze_reply(res["reply"])
+                if rows:
+                    with st.expander(f"逐字音韵分析（{len(rows)} 字）"):
+                        trs = []
+                        for a in rows:
+                            tc = (f"tone-{a['tone']}"
+                                  if any(t in a["tone"] for t in "平上去入") else "")
+                            tt = f'<span class="tone-tag {tc}">{a["tone"]}</span>'
+                            src_color = "#4a7a5a" if a["src"] == "收录" else "#9a917e"
+                            trs.append(
+                                f"<tr><td class=\"ch\">{a['char']}</td>"
+                                f"<td class=\"ipa\">{a['ipa']}</td>"
+                                f"<td>{tt}</td>"
+                                f"<td style=\"color:{src_color};font-size:0.75rem\">{a['src']}</td></tr>")
+                        st.markdown(
+                            '<table class="gi-phon"><thead><tr>'
+                            "<th>字</th><th>东汉 IPA</th><th>声调</th><th>来源</th>"
+                            f"</tr></thead><tbody>{''.join(trs)}</tbody></table>",
+                            unsafe_allow_html=True)
 
         # 对话历史（收进折叠面板）
         if st.session_state.turns:
@@ -1263,3 +1750,8 @@ with col2:
                     session.reset()
                     st.session_state.turns = []
                     st.rerun()
+
+    # ================= v5 研究面板 =================
+    # 独立于对话/结果的研究视图：历史音系探索器、同字跨体系对照（争议项＋
+    # 各体系覆盖率）、中央研究院 CCR 原始记录检索。全部离线数据、来源可溯。
+    _render_phonology_research()

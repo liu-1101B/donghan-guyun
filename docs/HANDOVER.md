@@ -1,6 +1,6 @@
 # 交接说明（给下一个会话／模型）
 
-> 更新时间：2026-11-03　分支：`feat/historical-phonology-foundation`
+> 更新时间：2026-11-03（第五阶段前端并入：robot = v5 主界面）　分支：`feat/historical-phonology-foundation`
 
 新会话接手时，先读这一页，再读 [`docs/v5-goal.md`](v5-goal.md)（六阶段路线与逐阶段差距）
 和 [`docs/HISTORICAL_PHONOLOGY_ARCHITECTURE.md`](HISTORICAL_PHONOLOGY_ARCHITECTURE.md)（数据与引擎架构）。
@@ -80,8 +80,7 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
    它们是死重量，`import numpy/scipy` 永远解析到 `.libs_guyun2`，不要试图再删，
    也不要让 `.libs_guyun` 排在 `.libs_guyun2` 前面。
 4. **跑测试要用工作树根的 `run_feat_tests.py`**（现跑 `test_historical_phonology.py`
-   + `test_llm_provider.py`，156 项全绿；robot 冒烟 `tests/test_robot_app_smoke.py`
-   不在其中，要单独跑）
+   + `test_llm_provider.py` + `test_robot_app_smoke.py`，161 项全绿）
    原生 `python -m unittest` 会有 5 项假失败——沙箱拒绝写入 `tempfile.mkdtemp()`
    创建的 `0o700` 目录，该脚本把 `0o700` 重映射为 `0o707`。
    仓库根的 `run_tests_sandbox.py` **不要**在工作树 CWD 下运行。
@@ -135,6 +134,9 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
 
 测试：`run_feat_tests.py` 107 项全绿；
 `scripts/smoke_app.py` AppTest 冒烟通过（6 个 selectbox，含「拟音体系」）。
+
+> 2026-11-03 起该能力已**同步进 robot 主界面**（见「第五阶段前端并入」节）；
+> composer 保留同样的 selectbox 与研究面板作辅助界面。
 
 ### 第一阶段收尾 ✅ 已完成（东汉→中古音类对应表，单提交）
 
@@ -291,11 +293,59 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
   用户决定 **v5 优先面向 Windows 用户**（v5-goal.md 顶部有记录），
   Jetson 真机回归已降为可选项、不再是 v5 完成判据。
 
+### 第五阶段前端并入 ✅ 已完成（2026-11-03，robot = v5 主界面）
+
+用户实测反馈定调：**「v5 应该是在 v4 的基础上做开发」**——v4 是 Windows 机器人
+界面（`robot/app.py`），composer（`guyun_app.py`）是 v3 界面。此前 v5 能力
+（第三阶段 ③ 学者体系 UI、研究面板）落在 composer、部分落在 robot → 全部并入 robot：
+
+- **拟音体系 selectbox**（左列，仅古韵模式显示）：默认「东汉洛阳官音（默认）」
+  （`system_id=None` → legacy 路径，行为与 v4 完全一致），另 11 套 Sinica 学者
+  体系（上古 5 / 中古 6，标签来自 `SCHOLAR_SYSTEMS_ALL`）；自然语音模式强制
+  `system_id=None`（选中值忽略）。
+- **Worker**（`_gen_worker`）：`cfg["system_id"]` 决定 user / reply_anc 的
+  `synthesize_ancient(system_id=...)`（学者路径缺字计 unknown，**不补现代拼音**）。
+  **中古槽自动避让**：主体系与中古槽默认（王力中古）重合时，中古槽自动改用
+  董同龢中古并给 `middle_note`（界面上 caption 提示）；其他体系保持对王力中古
+  的三时期对照。
+- **逐字双列数据**：`AncientResult.characters`（收录 / 拼音近似 /
+  缺字（不补拼音））× `phoneme_capability.assess_ipa` 引擎侧能力 → payload
+  `scholar_rows`（char/ipa/status/cap）/ `scholar_counts` / `scholar_selections`
+  （多音字选音 4 元组）；结果面板学者路径渲染逐字对照表 + 引擎侧能力汇总 +
+  选音依据表；无体系（legacy）路径保持原逐字表。
+- **结果区**：IPA 块改用 worker 给出的所选体系逐字 IPA（不重算；旧版结果兜底
+  本地查表）；三时期对照首列改用 worker 的 reply_anc 数据（IPA/覆盖/缺字随所选
+  体系，标题「所选体系」）；音频卡片标题、meta 行随体系名动态化；`reply_anc`
+  音频 dict 新增 `system`/`system_label`/`ipa`/`coverage`/`approx`/`unknown`。
+- **研究面板**（右栏末尾新函数 `_render_phonology_research()`，自 composer 原样
+  移植）：🧭 历史音系探索（广韵音韵地位 / PHONO-ML / 中原音韵 / lookup_reading）/
+  🔀 同字跨体系对照（争议项 + 各体系覆盖）/ 🏛️ Sinica CCR 原始记录检索
+  （数据包缺失时显示 unzip 指引）。全部离线数据、来源可溯。
+- **热重载**：`_RELOAD_ORDER` 增补 `language.history.*` 子模块 +
+  `language.polyphone`/`phoneme_capability`/`era_audio`（缺失模块安全跳过）。
+- **测试**：`run_feat_tests.py` 改为跑 3 个文件 = **161 项全绿**（134 音韵 +
+  22 LLM + 5 robot 冒烟：基础渲染 / 古韵模式 selectbox+研究面板渲染 / 四段音频
+  payload / 无应答诚实为空（新增 v5 键缺省断言）/ **wangli_mc 学者路径**
+  （真合成 + `scholar_rows` 键齐整 + 缺字 ipa=None + 中古槽避让断言
+  `"自动改用" in middle_note` + `reply_mc.system == "dongtonghe_mc"`））。
+  ⚠️ 避让提示文案是「中古槽**自动改用**」（不是「自动换」）。
+  `scripts/smoke_app.py`（composer）6 个 selectbox 仍正常。
+- **composer 去留（待用户拍板）**：composer 保留同样的拟音体系 selectbox 与
+  三个研究面板作为辅助界面（冒烟仍过）；**v5 主界面 = robot**。
+- v4 便携打包（`packaging/` `launcher_v4` + PyInstaller）本就基于 robot 界面，
+  改动后**可直接重新打包**出 v5 便携版（用户未要求，先不动）。
+
+验证：`run_feat_tests.py` 161 OK（exit 0）；`scripts/smoke_app.py` EXIT=0；
+:8502 重启（`STREAMLIT_GLOBAL_DEVELOPMENT_MODE=false` + 全量 PYTHONPATH +
+CWD=worktree，日志 `.robot_server.log`）HTTP 200、无 Traceback。
+
 ### 下一阶段（第四阶段余下，用户已定顺序）
 
 - ✅ ① 一句话多时期音频对照（东汉 / 中古 / 现代同句三版）——已完成；
 - ✅ ② 翻译层词典未命中时接 LLM（宁可不答不编造，标注 dict vs LLM）——已完成；
 - ✅ ③ 多音字按词切分选音——已完成（jieba + pypinyin + 经验地位映射，见上）；
+- ✅ **第五阶段前端并入**：v5 全部能力（拟音体系 selectbox / 逐字双列 /
+  研究面板）落到 v4 robot 界面（2026-11-03，见上节）；
 - ~~Jetson 真机链路回归清单~~（2026-11-03 起 **降为可选**：v5 优先面向
   Windows 用户，Jetson 不再是 v5 完成判据；有真机窗口时再按 v5-goal.md
   第五阶段清单执行）。
@@ -314,6 +364,7 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
 | 古韵合成 eSpeak | ✅ 32540 采样点 / 1.48s |
 | Edge TTS 现代朗读 | ✅ MP3 |
 | 三时期音频对照（东汉 / 中古王力 / 现代） | ✅ `language/era_audio.py`，robot 面板三列 |
+| v5 拟音体系 + 逐字双列 + 研究面板（robot 主界面） | ✅ `robot/app.py`（第五阶段前端并入，2026-11-03），run_feat_tests 161 项全绿 |
 | 切韵对照（Qieyun） | ✅（依赖坑 2 的 networkx 补丁） |
 | 录音 + 回放 | ✅ selftest True |
 | 语音识别 | ✅ SenseVoice 逐字正确；Vosk 兜底可用 |
