@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - feat/windows-robot-compat
+      # v5 开发分支：robot/app.py 是 v5 主界面（2026-11-03 用户定调），
+      # robot/ 改动同样要走这套测试（含 robot 冒烟 + 四段音频 worker 测试）。
+      - feat/historical-phonology-foundation
     paths:
       - "robot/**"
       - "services/**"
