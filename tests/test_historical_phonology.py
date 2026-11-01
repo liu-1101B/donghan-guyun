@@ -907,12 +907,131 @@ class PhonemeCapabilityTests(unittest.TestCase):
         # 共振峰表能真发的（直接读 sound_synth 的表，防漂移）
         for ch in "\u0283\u0292\u0255\u0291xh\u0263":
             self.assertEqual(_formant_status(ch), OK, repr(ch))
-        # ASCII g 能发，小写 G 变体 ɡ 不能
+        # ASCII g 能发；小写 G 变体 ɡ、ȶ 原表缺失，2026-11-03 补齐（应用户要求）
         self.assertEqual(_formant_status("g"), OK)
-        self.assertEqual(_formant_status("\u0261"), SILENT)
-        self.assertEqual(_formant_status("\u0236"), SILENT)
+        self.assertEqual(_formant_status("\u0261"), OK)   # ɡ
+        self.assertEqual(_formant_status("\u0236"), OK)   # ȶ
         self.assertEqual(_formant_status("i"), OK)
-        self.assertEqual(_formant_status("\u026a"), OK)  # ɪ（已补进共振峰元音表）
+        self.assertEqual(_formant_status("\u026a"), OK)   # ɪ（已补进共振峰元音表）
+        # 2026-11-03 共振峰补齐批：eSpeak 侧实测静默丢弃的 13 个 IPA 符号
+        # 现在共振峰全部能发（路由后这些词不再缺段）
+        for ch in ("\u0221\u0236\u0256\u025f\u0261\u0271\u0272\u0273"
+                   "\u027d\u0288\u0285\u028e\u00e7"):
+            self.assertEqual(_formant_status(ch), OK, repr(ch))
+        # 数据质量符号（带附加符拉丁）经 FORMANT_CHAR_ALIAS 解码成音值
+        for ch in "\u1e0d\u1e47\u1e63\u1e6d\u1e93\u015b\u017a":
+            self.assertEqual(_formant_status(ch), OK, repr(ch))
+        # ậ（李方桂表残留）按基音 a 发音
+        import sound_synth
+        self.assertTrue(sound_synth.is_vowel("\u1ead"))
+        self.assertEqual(_formant_status("\u1ead"), OK)
+
+    def test_formant_alias_decodes_diacritic_latin(self):
+        # 附加符约定：点下 = 卷舌系列，锐音符 = 硬腭塞擦/擦音（仅合成侧解码）
+        import sound_synth
+        for src, dst in [("\u1e0d", "\u0256"), ("\u1e6d", "\u0288"),
+                         ("\u1e47", "\u0273"), ("\u1e63", "\u0282"),
+                         ("\u1e93", "\u0290"), ("\u015b", "\u0255"),
+                         ("\u017a", "\u0291")]:
+            self.assertEqual(sound_synth._formant_alias(src), dst)
+        self.assertEqual(
+            len(sound_synth.synth_with_formant("\u1ead")),
+            len(sound_synth.synth_with_formant("a")))
+
+    def test_formant_speaks_newly_modeled_consonants(self):
+        # 13 个原缺失段符号 + 4 个双字塞擦音（tɕʰ/tʂʰ/tsʰ/dʐ 在分音器
+        # 列表里、参数表漏建，旧代码把整条塞擦音静默丢弃）。
+        # 长度确定性钉住：辅音段 + 150ms "a"，防未来漂移。
+        import numpy as np
+        import sound_synth
+        sr = sound_synth.SAMPLE_RATE
+        stop = int(sr * 0.0225) + int(sr * 0.15)
+        affricate = int(sr * 0.0225) + int(sr * 0.06) + int(sr * 0.15)
+        noise90 = int(sr * 0.09) + int(sr * 0.15)
+        for ch, expected in [
+            ("\u0288", stop), ("\u0256", stop), ("\u0236", stop),
+            ("\u025f", stop), ("\u0261", stop),
+            ("\u0221", affricate),
+            ("t\u0255\u02b0", affricate), ("t\u0282\u02b0", affricate),
+            ("ts\u02b0", affricate), ("d\u0290", affricate),
+            ("\u027d", noise90), ("\u00e7", noise90),
+            ("\u0273", noise90), ("\u0271", noise90), ("\u0272", noise90),
+            ("\u0285", noise90), ("\u028e", noise90),
+        ]:
+            audio = sound_synth.synth_with_formant(ch + "a")
+            self.assertEqual(len(audio), expected, repr(ch))
+            self.assertGreater(float(np.max(np.abs(audio))), 0, repr(ch))
+
+    def test_word_routing_predicate(self):
+        # 路由判定依据实测冻结矩阵（SILENT_FROZEN），不猜测
+        import sound_synth
+        self.assertTrue(sound_synth._word_dropped_by_espeak("\u0263\u0251\u014b"))      # ɣɑŋ
+        self.assertTrue(sound_synth._word_dropped_by_espeak("\u026a"))                 # ɪ
+        self.assertTrue(sound_synth._word_dropped_by_espeak("\u1e6d\u02b0"))           # ṭʰ（数据质量）
+        self.assertFalse(sound_synth._word_dropped_by_espeak("t\u0255i\u0259n"))       # tɕiɛn
+        self.assertFalse(sound_synth._word_dropped_by_espeak("t\u0282\u02b0\u0251\u014b"))  # tʂʰɑŋ
+        self.assertFalse(sound_synth._word_dropped_by_espeak("\u00e2"))                # â 是 approx 不是 silent
+
+    def test_routing_clean_phrase_single_espeak_call(self):
+        # 短语无被丢音素 → 一次 eSpeak 调用（旧行为不变），共振峰不参与
+        import numpy as np
+        import sound_synth
+        calls_e, calls_f = [], []
+        real_e, real_f = sound_synth.synth_with_espeak, sound_synth.synth_with_formant
+        sound_synth.synth_with_espeak = lambda parts, pitch=130: (
+            calls_e.append(tuple(parts)), np.full(100, 0.5, dtype=np.float32))[1]
+        sound_synth.synth_with_formant = lambda word, pitch=120: (
+            calls_f.append(word), np.full(200, 0.5, dtype=np.float32))[1]
+        try:
+            audio = sound_synth.synthesize_text("t\u0255i\u0259n m\u0251\u014b",
+                                                word_gap=0.0)
+        finally:
+            sound_synth.synth_with_espeak = real_e
+            sound_synth.synth_with_formant = real_f
+        self.assertEqual(calls_e, [("t\u0255i\u0259n", "m\u0251\u014b")])
+        self.assertEqual(calls_f, [])
+        self.assertEqual(len(audio), 100)
+
+    def test_routing_silent_word_goes_formant(self):
+        # 短语含被丢音素 → 干净词打包 eSpeak，被丢词逐个走共振峰
+        import numpy as np
+        import sound_synth
+        calls_e, calls_f = [], []
+        real_e, real_f = sound_synth.synth_with_espeak, sound_synth.synth_with_formant
+        sound_synth.synth_with_espeak = lambda parts, pitch=130: (
+            calls_e.append(tuple(parts)), np.full(100, 0.5, dtype=np.float32))[1]
+        sound_synth.synth_with_formant = lambda word, pitch=120: (
+            calls_f.append(word), np.full(200, 0.5, dtype=np.float32))[1]
+        try:
+            audio = sound_synth.synthesize_text("t\u0255i\u0259n \u0263\u0251\u014b",
+                                                word_gap=0.0)
+        finally:
+            sound_synth.synth_with_espeak = real_e
+            sound_synth.synth_with_formant = real_f
+        self.assertEqual(calls_e, [("t\u0255i\u0259n",)])
+        self.assertEqual(calls_f, ["\u0263\u0251\u014b"])
+        self.assertEqual(len(audio), 300)  # eSpeak 100 + 共振峰 200（word_gap=0）
+
+    def test_routing_pause_between_engines(self):
+        # 两引擎之间的停顿：eSpeak 组先出、停顿静音、共振峰词随后
+        import numpy as np
+        import sound_synth
+        calls_e, calls_f = [], []
+        real_e, real_f = sound_synth.synth_with_espeak, sound_synth.synth_with_formant
+        sound_synth.synth_with_espeak = lambda parts, pitch=130: (
+            calls_e.append(tuple(parts)), np.full(100, 0.5, dtype=np.float32))[1]
+        sound_synth.synth_with_formant = lambda word, pitch=120: (
+            calls_f.append(word), np.full(200, 0.5, dtype=np.float32))[1]
+        try:
+            audio = sound_synth.synthesize_text("t\u0255i\u0259n . \u0263\u0251\u014b",
+                                                word_gap=0.0)
+        finally:
+            sound_synth.synth_with_espeak = real_e
+            sound_synth.synth_with_formant = real_f
+        self.assertEqual(calls_e, [("t\u0255i\u0259n",)])
+        self.assertEqual(calls_f, ["\u0263\u0251\u014b"])
+        self.assertEqual(len(audio),
+                         100 + int(sound_synth.SAMPLE_RATE * 0.4) + 200)
 
     # -- 体系级报告（冻结 .probe_reports.json 的数字）-------------------------
 

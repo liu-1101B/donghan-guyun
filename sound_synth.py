@@ -1,4 +1,9 @@
-""" sound_synth.py 东汉洛阳官音 双引擎合成器 (eSpeak-ng 优先，回退共振峰) """
+""" sound_synth.py 东汉洛阳官音 双引擎合成器
+
+eSpeak-ng 优先；含 eSpeak 实测静默丢弃音素的词按词路由到共振峰引擎
+（synthesize_text 逐词路由，2026-11-03 应用户要求补齐共振峰表）；
+eSpeak 整段失败时整短语回退共振峰。
+"""
 
 import struct, math, wave, io, base64, subprocess, tempfile, os
 import sys
@@ -182,6 +187,7 @@ PRECOMPOSED_VOWEL_BASE = {
     "ò": "o", "ó": "o", "ô": "o", "õ": "o", "ö": "o", "ő": "o",
     "ù": "u", "ú": "u", "û": "u", "ü": "u", "ǔ": "u", "ū": "u",
     "ǚ": "y", "ǜ": "y",
+    "ậ": "a",  # 2026-11-03：李方桂中古表数据质量残留符号，按基音 a 发音
 }
 
 def _vowel_base(phoneme):
@@ -191,6 +197,19 @@ def _vowel_base(phoneme):
     if phoneme in VOWEL_FORMANTS:
         return phoneme
     return PRECOMPOSED_VOWEL_BASE.get(phoneme)
+
+# 2026-11-03（应用户要求）：带附加符号的拉丁字母（数据质量残留，能力矩阵
+# 按 eSpeak 侧如实报"丢弃"）在共振峰引擎里按 IPA 附加符约定解码成音值：
+# 点下符 = 卷舌系列，锐音符 = 硬腭塞擦/擦音。仅合成侧解释，不改数据。
+FORMANT_CHAR_ALIAS = {
+    "ḍ": "ɖ", "ṭ": "ʈ", "ṇ": "ɳ",
+    "ṣ": "ʂ", "ẓ": "ʐ",
+    "ś": "ɕ", "ź": "ʑ",
+}
+
+def _formant_alias(tok):
+    """token 内逐字符应用 FORMANT_CHAR_ALIAS（共振峰引擎专用）。"""
+    return "".join(FORMANT_CHAR_ALIAS.get(c, c) for c in tok)
 
 CONSONANT_PARAMS = {
     "p": {"type": "stop", "voiced": False, "place": "bilabial", "noise_start": 2000, "noise_end": 5000},
@@ -227,6 +246,28 @@ CONSONANT_PARAMS = {
     "ʂ": {"type": "fricative", "voiced": False, "place": "retroflex", "center": 3500, "bandwidth": 1800},
     "ʐ": {"type": "fricative", "voiced": True, "place": "retroflex", "center": 3000, "bandwidth": 1800},
     "tʂ": {"type": "affricate", "stop": "t", "fricative": "ʂ"},
+    # 2026-11-03（应用户要求）：eSpeak-ng zh 声音实测静默丢弃、而共振峰表此前
+    # 缺失的符号（eSpeak 侧冻结清单见 language.phoneme_capability.SILENT_FROZEN），
+    # 供逐词路由把这些词的每一段都发出来。参数沿用表内同类音的制式。
+    "ʈ": {"type": "stop", "voiced": False, "place": "retroflex", "noise_start": 3500, "noise_end": 6000},
+    "ɖ": {"type": "stop", "voiced": True, "place": "retroflex", "noise_start": 3000, "noise_end": 5500},
+    "ȶ": {"type": "stop", "voiced": False, "place": "retroflex", "noise_start": 3500, "noise_end": 6000},
+    "ɟ": {"type": "stop", "voiced": True, "place": "palatal", "noise_start": 3000, "noise_end": 5500},
+    "ɡ": {"type": "stop", "voiced": True, "place": "velar", "noise_start": 1500, "noise_end": 3500},
+    "ȡ": {"type": "affricate", "stop": "ʈ", "fricative": "ʂ"},
+    "ɳ": {"type": "nasal", "place": "retroflex", "f1": 350, "f2": 1400, "f3": 2600, "pole_bandwidth": 100},
+    "ɱ": {"type": "nasal", "place": "labiodental", "f1": 300, "f2": 1000, "f3": 2000, "pole_bandwidth": 100},
+    "ɲ": {"type": "nasal", "place": "palatal", "f1": 350, "f2": 1600, "f3": 2700, "pole_bandwidth": 100},
+    "ɽ": {"type": "fricative", "voiced": True, "place": "retroflex", "center": 2800, "bandwidth": 1800},
+    "ç": {"type": "fricative", "voiced": False, "place": "palatal", "center": 4500, "bandwidth": 1800},
+    "ʅ": {"type": "liquid", "place": "retroflex", "f1": 400, "f2": 1500, "f3": 2500},
+    "ʎ": {"type": "liquid", "place": "palatal", "f1": 300, "f2": 2000, "f3": 2800},
+    # 同批补齐：分音器 MULTI_CHAR_PHONEMES 有、但表中漏建的四个双字塞擦音。
+    # 旧代码把整条塞擦音静默丢弃（旧拼音映射 q/ch/c → tɕʰ/tʂʰ/tsʰ 全受影响）。
+    "tɕʰ": {"type": "affricate", "stop": "t", "fricative": "ɕ"},
+    "tʂʰ": {"type": "affricate", "stop": "t", "fricative": "ʂ"},
+    "tsʰ": {"type": "affricate", "stop": "t", "fricative": "s"},
+    "dʐ": {"type": "affricate", "stop": "d", "fricative": "ʐ"},
 }
 
 def saw_wave(t, pitch):
@@ -325,6 +366,7 @@ def synth_with_formant(ipa_str, pitch=120):
     for i, ph in enumerate(phonemes):
         if ph in (' ', '　'):
             audio_parts.append(np.zeros(int(SAMPLE_RATE * 0.05))); continue
+        ph = _formant_alias(ph)  # 数据质量符号先解码成音值（仅合成侧）
         is_final = True
         for next_ph in phonemes[i+1:]:
             if is_vowel(next_ph) or next_ph in ('j', 'w', 'ʷ', 'ʲ'):
@@ -371,11 +413,72 @@ def synth_with_formant(ipa_str, pitch=120):
 # 统一合成接口
 # ============================================================
 
+def _word_dropped_by_espeak(word_ipa):
+    """词内是否含 eSpeak 实测静默丢弃（SILENT_FROZEN）的音素。
+
+    判定依据 language.phoneme_capability.classify_symbol 的实测冻结矩阵，
+    不猜测。此类词在 synthesize_text 里整体转共振峰，否则 eSpeak 输出会缺段。
+    """
+    from language.phoneme_capability import classify_symbol, SILENT  # 惰性导入防循环
+    for tok in tokenize_ipa(word_ipa):
+        for ch in tok:
+            if classify_symbol(ch) == SILENT:
+                return True
+    return False
+
+
+def _phrase_formant_fallback(words, pitch, word_gap):
+    """整短语共振峰回退（逐词 + word_gap 静音），返回音频段列表。"""
+    out = []
+    for i, ipa in enumerate(words):
+        part = synth_with_formant(ipa, pitch)
+        if len(part) > 0:
+            out.append(part)
+            if i < len(words) - 1:
+                out.append(np.zeros(int(SAMPLE_RATE * word_gap)))
+    return out
+
+
+def _routed_phrase(words, pitch, word_gap):
+    """短语内逐词路由：eSpeak 干净词仍连续打包一次调用（保留内部韵律），
+    含 eSpeak 静默丢弃音素的词逐个走共振峰；eSpeak 整组失败时该组
+    降级为逐词共振峰。"""
+    chunks = []
+    run = []
+
+    def flush():
+        if not run:
+            return
+        group = list(run)
+        run.clear()
+        audio = synth_with_espeak(group, pitch)
+        if audio is None or len(audio) == 0:
+            chunks.extend(_phrase_formant_fallback(group, pitch, word_gap))
+            return
+        chunks.append(audio)
+
+    for w in words:
+        if _word_dropped_by_espeak(w):
+            flush()
+            audio = synth_with_formant(w, pitch)
+            if len(audio) > 0:
+                chunks.append(audio)
+        else:
+            run.append(w)
+    flush()
+    return chunks
+
+
 def synthesize_text(ipa_text, word_gap=0.08, pitch=130, tone_list=None):
-    """统一合成接口：eSpeak-ng 优先，回退共振峰。返回 numpy 数组
+    """统一合成接口：eSpeak-ng 优先，按词路由共振峰。返回 numpy 数组
 
     停顿处理策略：按标点分组为短语，每个短语整体交给 eSpeak-ng，
     短语之间在 numpy 层插入静音，不做音频切割。
+
+    逐词路由（2026-11-03 应用户要求）：短语内只要有一个词含 eSpeak
+    实测静默丢弃的音素，该短语改为逐词路由——干净词仍连续打包交给
+    eSpeak，被丢词走共振峰，两个引擎的音频段按词序拼接。短语全部
+    干净时行为与旧版一致（整短语一次 eSpeak 调用）。
     """
     if not ipa_text or not ipa_text.strip():
         return np.array([])
@@ -413,25 +516,21 @@ def synthesize_text(ipa_text, word_gap=0.08, pitch=130, tone_list=None):
             parts.append(np.zeros(int(SAMPLE_RATE * data)))
             continue
 
-        # 合成一个短语
-        espeak_audio = synth_with_espeak(data, pitch)
-        if espeak_audio is not None and len(espeak_audio) > 0:
-            parts.append(espeak_audio)
+        # 合成一个短语：无被丢音素 → 整短语一次 eSpeak（旧行为）；
+        # 有被丢音素 → 逐词路由（干净词打包 eSpeak + 被丢词共振峰）。
+        if not any(_word_dropped_by_espeak(w) for w in data):
+            espeak_audio = synth_with_espeak(data, pitch)
+            if espeak_audio is not None and len(espeak_audio) > 0:
+                parts.append(espeak_audio)
+            else:
+                # 回退到共振峰，scipy 异常已有保护
+                try:
+                    parts.extend(_phrase_formant_fallback(data, pitch, word_gap))
+                except ImportError:
+                    pass
         else:
-            # 回退到共振峰，scipy 异常已有保护
             try:
-                phrase_audio = []
-                for i, ipa in enumerate(data):
-                    part = synth_with_formant(ipa, pitch)
-                    if len(part) > 0:
-                        phrase_audio.append(part)
-                        if i < len(data) - 1:
-                            phrase_audio.append(np.zeros(int(SAMPLE_RATE * word_gap)))
-                if phrase_audio:
-                    p = np.concatenate(phrase_audio)
-                    if len(p) > 0 and np.max(np.abs(p)) > 0:
-                        p = p / np.max(np.abs(p)) * 0.8
-                    parts.append(p)
+                parts.extend(_routed_phrase(data, pitch, word_gap))
             except ImportError:
                 pass
 

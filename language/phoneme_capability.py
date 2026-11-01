@@ -10,9 +10,12 @@
 - eSpeak-ng：``preprocess_ipa()`` 把一小撮 IPA 符号显式映射成音素别名
   （:data:`ESPEAK_IPA_MAP`，与 sound_synth 共享同一份表）；**未处理的
   符号原样透传**，而 eSpeak-ng 的 zh 声音实测会丢掉其中大部分。
-- 共振峰回退：``synth_with_formant()`` 只能发音
-  ``VOWEL_FORMANTS`` / ``CONSONANT_PARAMS`` 里的符号，其余静默丢弃。
-  （eSpeak 整体失败时才启用，所以它是"备用引擎"指标，不是主路径。）
+- 共振峰引擎：``synth_with_formant()`` 发音 ``VOWEL_FORMANTS`` /
+  ``CONSONANT_PARAMS`` 里的符号，其余静默丢弃；2026-11-03 起
+  ``synthesize_text`` 对含 eSpeak 丢弃音素的词**逐词路由**到该引擎
+  （干净词仍走 eSpeak），且共振峰表已补齐 eSpeak 实测静默丢弃的
+  全部 IPA 符号及 ``ḍ ṭ ṇ ṣ ẓ ś ź ậ`` 的数据质量别名
+  （``FORMANT_CHAR_ALIAS``，仅合成侧解码，数据不动）。
 
 分类依据两类证据，不做猜测：
 
@@ -143,9 +146,11 @@ def _classify_token(tok: str) -> str:
 
 
 def _formant_status(tok: str) -> str:
-    """token 级共振峰引擎状态（直接读 sound_synth 的真实表，防漂移）。"""
-    from sound_synth import CONSONANT_PARAMS, is_vowel  # 惰性导入防循环
-    if tok in CONSONANT_PARAMS or is_vowel(tok):
+    """token 级共振峰引擎状态（直接读 sound_synth 的真实表，防漂移；
+    数据质量符号先经 FORMANT_CHAR_ALIAS 解码成音值再查表）。"""
+    from sound_synth import CONSONANT_PARAMS, is_vowel, _formant_alias  # 惰性导入防循环
+    aliased = _formant_alias(tok)
+    if aliased in CONSONANT_PARAMS or is_vowel(aliased):
         return OK
     return SILENT
 
