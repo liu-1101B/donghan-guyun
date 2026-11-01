@@ -199,7 +199,7 @@ def cmd_map():
              "- 语料: %d 审核字 × 6 中古体系 + 东汉 legacy，共 %d 条 IPA 串" %
               (len(REVIEW_CHARS) + len(HF_CHARS), n_ipa),
              "- 规则: 每符号最终 eSpeak 串 = ESPEAK_APPROX_MAP.get(ch, ESPEAK_IPA_MAP.get(ch, ch))",
-             "- 类型: approx=28 符号冻结近似层；map=7 修复映射；pass=原生透传（未实测）", "",
+             "- 类型: approx=%d 符号近似层（含 2026-11-03 用户批准的 ă→a）；map=%d 修复映射；pass=原生透传（未实测）" % (len(pc.ESPEAK_APPROX_MAP), len(pc.ESPEAK_IPA_MAP)), "",
              "## 并音组（≥2 个原始符号 → 同一 eSpeak 串）", "",
              "| eSpeak 串 | 原始符号(类型) | 实例(字/体系/IPA) | 感知影响 |",
              "|---|---|---|---|"]
@@ -281,7 +281,7 @@ def cmd_map():
               "- 跨层并音（如 ɲ(冻结) 与 ȵ(常规) 同到 J、ȶ/ȡ→ts 与原生 ts）：",
               "  前者在并音组内以成员形式列出，后者见上方 ASCII 并层表。",
               "- pass 型透传符号是否被 eSpeak 如实发音未经 -x 验证，见上风险清单",
-              "  （预组合带符元音 â/ï/ă 与组合附加符号 ́/̆/̈/̌/̯ 均在其中）。",
+              "  （预组合带符元音 â/ï 与组合附加符号 ́/̆/̈/̌/̯ 均在其中）。",
               ""]
     _write(os.path.join(REPORT_DIR, "map_collisions.md"), "\n".join(lines))
     print("map: %d collision groups, %d unmapped pass-through symbols" % (len(coll), len(unmapped)))

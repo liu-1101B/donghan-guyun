@@ -47,7 +47,7 @@
 | **惡** | `u`→`u` (×2) [658ms] | `ʔuo`→`?uo` (×2) [725ms] | `ʔuo`→`?uo` (×2) [725ms] | `uo`→`uo` (×2) [673ms] | `ʔu`→`?u` (×2) [711ms] | `ʔuo`→`?uo` (×2) [725ms] | — |
 | **泊** | `bɑk`→`bAk` [753ms] | `bʰɑk`→`bhAk` [805ms] | `bɑk`→`bAk` [753ms] | `bâk`→`bâk` [753ms] | `bʰɑk`→`bhAk` [805ms] | `bʰɑk`→`bhAk` [805ms] | — |
 | **東** | `tuŋ`→`tuN` [797ms] | `tuŋ`→`tuN` [797ms] | `tuŋ`→`tuN` [797ms] | `tung`→`tung` [867ms] | `toŋ`→`toN` [797ms] | `tuŋ`→`tuN` [797ms] | — |
-| **山** | `ʃæn`→`San` [854ms] | `ʃæn`→`San` [854ms] | `ʂæn`→`San` [854ms] | `ṣăn`→`Săn` [690ms] | `ʃɐn`→`San` [854ms] | `ʂăn`→`Săn` [943ms] | `ʃen`→`Sen` [810ms] |
+| **山** | `ʃæn`→`San` [854ms] | `ʃæn`→`San` [854ms] | `ʂæn`→`San` [854ms] | `ṣăn`→`San` [854ms] | `ʃɐn`→`San` [854ms] | `ʂăn`→`Săn` [943ms] | `ʃen`→`Sen` [810ms] |
 | **水** | `ɕwi`→`Swi` [849ms] | `ɕjuei`→`Sjuei` [833ms] | `ɕiuɪi`→`Siuii` [1282ms] | `śjwi`→`Sjwi` [922ms] | `sǐue`→`sǐue` [1097ms] | `ɕwi`→`Swi` [849ms] | `ɕʷiʔ`→`Swi?` [886ms] |
 | **之** | `tɕǐə`→`tSǐ@` [970ms] | `tɕi`→`tSi` [761ms] | `tɕi`→`tSi` [761ms] | `tśï`→`tSï` [660ms] | `tɕǐə`→`tSǐ@` [970ms] | `tɕi`→`tSi` [761ms] | `tɕɨ`→`tS1` [582ms] |
 | **日** | `ɽǐět`→`rǐět` [1005ms] | `ȵjet`→`Jjet` [765ms] | `ȵiɪt`→`Jiit` [928ms] | `ńźjĕt`→`ńźjĕt` [1144ms] | `nʑǐet`→`nZǐet` [1072ms] | `ȵʑi̯ĕt`→`JZi̯ĕt` [1070ms] | `ȵit`→`Jit` [756ms] |
@@ -106,7 +106,7 @@
 - 惡: 6 体系均覆盖，无并音
 - 泊: 6 体系均覆盖，无并音
 - 東: 6 体系均覆盖，无并音
-- **山**（5 对并音）: wangli_mc×zhoufagao_mc: ʃæn≠ʂæn → 均变 `San`; wangli_mc×chenxinxiong_mc: ʃæn≠ʃɐn → 均变 `San`; dongtonghe_mc×zhoufagao_mc: ʃæn≠ʂæn → 均变 `San`; dongtonghe_mc×chenxinxiong_mc: ʃæn≠ʃɐn → 均变 `San`; zhoufagao_mc×chenxinxiong_mc: ʂæn≠ʃɐn → 均变 `San`
+- **山**（9 对并音）: wangli_mc×zhoufagao_mc: ʃæn≠ʂæn → 均变 `San`; wangli_mc×lifanggui_mc: ʃæn≠ṣăn → 均变 `San`; wangli_mc×chenxinxiong_mc: ʃæn≠ʃɐn → 均变 `San`; dongtonghe_mc×zhoufagao_mc: ʃæn≠ʂæn → 均变 `San`; dongtonghe_mc×lifanggui_mc: ʃæn≠ṣăn → 均变 `San`; dongtonghe_mc×chenxinxiong_mc: ʃæn≠ʃɐn → 均变 `San`; zhoufagao_mc×lifanggui_mc: ʂæn≠ṣăn → 均变 `San`; zhoufagao_mc×chenxinxiong_mc: ʂæn≠ʃɐn → 均变 `San`; lifanggui_mc×chenxinxiong_mc: ṣăn≠ʃɐn → 均变 `San`
 - 水: 7 体系均覆盖，无并音
 - 之: 7 体系均覆盖，无并音
 - 日: 7 体系均覆盖，无并音
