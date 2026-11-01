@@ -793,6 +793,12 @@ def _render_phonology_research():
                         "零声母行": "—",
                         "说明": "原始资料/转写数据集，非逐字拟音表（见上方探索器）",
                     })
+            # pyarrow 不接受同一列混 int 与 "—"（ArrowTypeError），
+            # 统一转 str（此表为展示表，不需要数值排序）
+            cov_rows = [
+                {k: (str(v) if isinstance(v, int) else v) for k, v in row.items()}
+                for row in cov_rows
+            ]
             st.dataframe(cov_rows, use_container_width=True, hide_index=True)
             st.caption(
                 "覆盖率口径：缺陷行＝源表声母列错位/缺损（保留但不给 IPA）；"

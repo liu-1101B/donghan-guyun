@@ -64,6 +64,29 @@ def preprocess_ipa(ipa_str):
     return ipa_str
 
 
+def _espeak_wav_path():
+    """eSpeak 临时 wav 路径。
+
+    临时文件必须落在当前进程树可写的目录：沙箱化的进程树里原生子进程
+    espeak.exe 被限制只能写工作区内（写不了 %TEMP% 系统默认目录），
+    且 eSpeak 写失败时仍退出码 0（仅 stderr 打印 Can't write to），
+    靠 rc 抓不到。优先放应用目录下的隐藏子目录（工作区内），
+    不可写时退回系统临时目录。
+    """
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    last_err = None
+    for base in (app_dir, tempfile.gettempdir()):
+        d = os.path.join(base, ".tmp_espeak")
+        try:
+            os.makedirs(d, exist_ok=True)
+            fd, path = tempfile.mkstemp(suffix=".wav", dir=d)
+            os.close(fd)
+            return path
+        except OSError as e:
+            last_err = e
+    raise RuntimeError(f"无法创建 eSpeak 临时目录: {last_err}")
+
+
 def synth_with_espeak(ipa_parts, pitch=130):
     """调用 eSpeak-ng 并返回 numpy 数组，使用 [[ipa]] 原生语法。
     停顿标记 (. 和 ,) 在调用前已被 synthesize_text 过滤，此处只处理纯 IPA。"""
@@ -82,8 +105,7 @@ def synth_with_espeak(ipa_parts, pitch=130):
 
     input_text = " ".join(ipa_segments)
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_wav:
-        wav_path = tmp_wav.name
+    wav_path = _espeak_wav_path()
 
     try:
         espeak_pitch = max(0, min(99, int((pitch - 100) / 2)))
@@ -95,8 +117,21 @@ def synth_with_espeak(ipa_parts, pitch=130):
             "-w", wav_path,
             input_text
         ]
-        subprocess.run(cmd, check=True, capture_output=True, text=True,
-                       timeout=15, env=get_espeak_env())
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              timeout=15, env=get_espeak_env())
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"eSpeak-ng rc={proc.returncode}: "
+                f"{(proc.stderr or proc.stdout or '').strip()[:200]}")
+        # rc=0 不等于成功：写文件失败时 eSpeak 同样退 0，且不留文件
+        # （或留 0 字节）。必须验证输出文件本身。
+        if not os.path.exists(wav_path) or os.path.getsize(wav_path) == 0:
+            raise RuntimeError(
+                f"eSpeak-ng 未产出音频 (rc={proc.returncode}, "
+                f"stderr={(proc.stderr or '').strip()[:200]!r})")
+        with open(wav_path, "rb") as _f:
+            if _f.read(4) != b"RIFF":
+                raise RuntimeError("eSpeak-ng 输出不是有效 RIFF wav")
 
         with wave.open(wav_path, 'rb') as wf:
             n_frames = wf.getnframes()
@@ -134,7 +169,29 @@ VOWEL_FORMANTS = {
     "u": (300, 1000, 2300), "o": (420, 1000, 2500), "ɔ": (550, 1000, 2600),
     "ʌ": (600, 1200, 2600), "ɑ": (700, 1200, 2600), "ɒ": (750, 1100, 2500),
     "ʉ": (350, 1600, 2400), "ɯ": (380, 1300, 2500), "ɤ": (450, 1300, 2500),
+    "ɪ": (390, 1990, 2550),
 }
+# 预组合带调元音 → VOWEL_FORMANTS 的基础键。共振峰引擎只建元音音质、
+# 不建调值，带调元音按基础元音发音。上古/中古拟音语料大量使用
+# （李方桂中古表约 5000 处 â ă ï ĕ），旧表无条目时回退引擎对这些
+# 元音完全不发声。
+PRECOMPOSED_VOWEL_BASE = {
+    "à": "a", "á": "a", "â": "a", "ã": "a", "ä": "a", "å": "a", "ă": "a",
+    "è": "e", "é": "e", "ê": "e", "ë": "e", "ě": "e", "ĕ": "e", "ẽ": "e",
+    "ì": "i", "í": "i", "î": "i", "ï": "i", "ĩ": "i", "ǐ": "i", "ī": "i",
+    "ò": "o", "ó": "o", "ô": "o", "õ": "o", "ö": "o", "ő": "o",
+    "ù": "u", "ú": "u", "û": "u", "ü": "u", "ǔ": "u", "ū": "u",
+    "ǚ": "y", "ǜ": "y",
+}
+
+def _vowel_base(phoneme):
+    """单元音符号 → VOWEL_FORMANTS 的基础键；非元音返回 None。"""
+    if not phoneme:
+        return None
+    if phoneme in VOWEL_FORMANTS:
+        return phoneme
+    return PRECOMPOSED_VOWEL_BASE.get(phoneme)
+
 CONSONANT_PARAMS = {
     "p": {"type": "stop", "voiced": False, "place": "bilabial", "noise_start": 2000, "noise_end": 5000},
     "b": {"type": "stop", "voiced": True, "place": "bilabial", "noise_start": 1500, "noise_end": 4000},
@@ -257,7 +314,9 @@ def tokenize_ipa(ipa_str):
     return result
 
 def is_vowel(phoneme):
-    return phoneme in "iyeɛæaɨəɐuoɔʌɑɒʉɯɤ" or (phoneme and phoneme[0] in "iyeɛæaɨəɐuoɔʌɑɒʉɯɤ")
+    return (phoneme in "iyeɛæaɨəɐuoɔʌɑɒʉɯɤ"
+            or (phoneme and phoneme[0] in "iyeɛæaɨəɐuoɔʌɑɒʉɯɤ")
+            or _vowel_base(phoneme) is not None)
 
 def synth_with_formant(ipa_str, pitch=120):
     phonemes = tokenize_ipa(ipa_str)
@@ -294,7 +353,8 @@ def synth_with_formant(ipa_str, pitch=120):
                 elif ptype == "aspiration": audio_parts.append(generate_noise(0.0225, 3000, 2000) * 0.4)
                 elif ptype == "labialization": audio_parts.append(generate_liquid(300, 1000, 2300, 0.015, pitch) * 0.3)
         elif is_vowel(ph):
-            f1, f2, f3 = VOWEL_FORMANTS.get(ph, VOWEL_FORMANTS.get(ph[0], (500, 1500, 2500)))
+            base = _vowel_base(ph) or ph
+            f1, f2, f3 = VOWEL_FORMANTS.get(base, VOWEL_FORMANTS.get(ph[0], (500, 1500, 2500)))
             if i > 0 and phonemes[i-1] in CONSONANT_PARAMS:
                 prev_params = CONSONANT_PARAMS[phonemes[i-1]]
                 if prev_params.get("type") == "labialization" or ('ʷ' in str(phonemes[i-1])):

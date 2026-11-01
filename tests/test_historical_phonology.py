@@ -912,7 +912,7 @@ class PhonemeCapabilityTests(unittest.TestCase):
         self.assertEqual(_formant_status("\u0261"), SILENT)
         self.assertEqual(_formant_status("\u0236"), SILENT)
         self.assertEqual(_formant_status("i"), OK)
-        self.assertEqual(_formant_status("\u026a"), SILENT)  # ɪ
+        self.assertEqual(_formant_status("\u026a"), OK)  # ɪ（已补进共振峰元音表）
 
     # -- 体系级报告（冻结 .probe_reports.json 的数字）-------------------------
 
@@ -1186,6 +1186,111 @@ class EasternMcCorrespondenceTests(unittest.TestCase):
                     self.assertEqual(p.chongniu, obj.重紐, desc)
                 checked += 1
         self.assertEqual(checked, 3872)
+
+
+class SoundSynthEngineRobustnessTests(unittest.TestCase):
+    """sound_synth 引擎健壮性：eSpeak 临时 wav 位置 / rc=0 空文件检测 / 共振峰元音表。"""
+
+    def test_espeak_wav_path_inside_app_dir(self):
+        """临时 wav 必须落在应用目录（沙箱下工作区内可写）。
+
+        沙箱化进程树里原生 espeak.exe 被限制只能写工作区，写不了 %TEMP%；
+        且写失败时 rc 仍为 0，旧实现靠 check=True 根本抓不到。
+        """
+        import os
+        import sound_synth
+        p = sound_synth._espeak_wav_path()
+        try:
+            self.assertTrue(
+                p.startswith(os.path.dirname(os.path.abspath(sound_synth.__file__))),
+                p)
+        finally:
+            if os.path.exists(p):
+                os.remove(p)
+
+    def test_espeak_rc0_without_wav_returns_none(self):
+        """eSpeak 写失败行为：rc=0 + stderr Can't write to + 无文件 → 判失败、不崩。"""
+        import os, subprocess
+        import sound_synth
+        real_run = sound_synth.subprocess.run
+
+        def fake_run(cmd, **kw):
+            if os.path.exists(cmd[-2]):
+                os.remove(cmd[-2])
+            return subprocess.CompletedProcess(
+                cmd, 0, stdout="", stderr="Can't write to: 'x.wav'")
+
+        sound_synth.subprocess.run = fake_run
+        try:
+            self.assertIsNone(sound_synth.synth_with_espeak(["ta"]))
+        finally:
+            sound_synth.subprocess.run = real_run
+
+    def test_espeak_zero_byte_wav_returns_none(self):
+        import subprocess
+        import sound_synth
+        real_run = sound_synth.subprocess.run
+        sound_synth.subprocess.run = lambda cmd, **kw: subprocess.CompletedProcess(
+            cmd, 0, stdout="", stderr="")
+        try:
+            self.assertIsNone(sound_synth.synth_with_espeak(["ta"]))
+        finally:
+            sound_synth.subprocess.run = real_run
+
+    def test_espeak_nonzero_rc_returns_none(self):
+        import subprocess
+        import sound_synth
+        real_run = sound_synth.subprocess.run
+        sound_synth.subprocess.run = lambda cmd, **kw: subprocess.CompletedProcess(
+            cmd, 1, stdout="", stderr="boom")
+        try:
+            self.assertIsNone(sound_synth.synth_with_espeak(["ta"]))
+        finally:
+            sound_synth.subprocess.run = real_run
+
+    def test_espeak_valid_wav_returns_audio(self):
+        import math, struct, subprocess, wave
+        import sound_synth
+        real_run = sound_synth.subprocess.run
+
+        def fake_run(cmd, **kw):
+            path, sr = cmd[-2], 22050
+            n = int(sr * 0.1)
+            frames = b"".join(
+                struct.pack("<h", int(8000 * math.sin(2 * math.pi * 200 * i / sr)))
+                for i in range(n))
+            with open(path, "wb") as f:
+                w = wave.open(f, "wb")
+                w.setnchannels(1)
+                w.setsampwidth(2)
+                w.setframerate(sr)
+                w.writeframes(frames)
+                w.close()
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        sound_synth.subprocess.run = fake_run
+        try:
+            audio = sound_synth.synth_with_espeak(["ta"])
+            self.assertIsNotNone(audio)
+            self.assertGreater(len(audio), 1000)
+        finally:
+            sound_synth.subprocess.run = real_run
+
+    def test_formant_speaks_precomposed_accented_vowels(self):
+        """预组合带调元音（语料实测 â ă ï ĕ 共约 5000 处）旧表一律不发声。"""
+        import sound_synth
+        for v, base in [("\u00e2", "a"), ("\u0103", "a"), ("\u00ef", "i"),
+                        ("\u0115", "e"), ("\u01d0", "i"), ("\u01d4", "u")]:
+            self.assertTrue(sound_synth.is_vowel(v), v)
+            a = sound_synth.synth_with_formant(v)
+            b = sound_synth.synth_with_formant(base)
+            self.assertEqual(len(a), len(b), v)
+            self.assertGreater(len(a), 0, v)
+
+    def test_formant_speaks_short_i(self):
+        import sound_synth
+        self.assertTrue(sound_synth.is_vowel("\u026a"))
+        self.assertGreater(len(sound_synth.synth_with_formant("\u026a")), 0)
 
 
 if __name__ == "__main__":
