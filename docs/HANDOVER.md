@@ -375,13 +375,40 @@ rc=0+0 字节 → None；rc≠0 → None；rc=0+有效 RIFF → 返回音频；�
 â ă ï ĕ ǐ ǔ 共振峰全部发声；ɪ 发声。`test_formant_status_uses_real_engine_sets`
 的 ɪ pin 由 SILENT → OK（已进元音表，防漂移 pin 同步更新）。
 
-**待用户拍板（未动）**：共振峰引擎升级——`CONSONANT_PARAMS` 补
-ȶ ȡ ɽ ɖ ʈ ɳ ɱ ɲ ɟ ʅ ʎ ɡ，并按词路由（干净词走 eSpeak、含 SILENT 词走共振峰
-+ UI 如实标注音色）。代价：共振峰音色较机械；ɡ/ȶ/ɪ 的 `_formant_status`
-pin 需改；`system_capability_report` 的 formant_* 活算数字会整体变化。
-**不要单方面实施**。
-
 **文档**：`v5-goal.md` 日期归一化（2026-11-05 → 2026-11-03 两处）。
+
+### 共振峰建模 + 逐词路由（2026-11-03，用户要求「你给它们建模不行吗」，已批准）
+
+此前 eSpeak 静默丢弃的 13 个 IPA 符号（ȶ ȡ ɖ ɟ ɡ ɳ ɱ ɲ ɽ ʈ ʅ ʎ ç）在
+共振峰兜底的 `CONSONANT_PARAMS` 里也缺失——含这些音素的词即使路由到
+兜底引擎，缺段**照样缺**，兜底形同虚设。现已补上：
+
+1. **`CONSONANT_PARAMS` 新增 17 条**：上述 13 个 IPA 辅音（塞音/擦音/鼻音/
+   流音参数按发音部位方式建模）+ 4 个双字塞擦音 tɕʰ/tʂʰ/tsʰ/dʐ（这 4 个
+   在分音器列表里、参数表漏建，旧代码对 q/ch/c 把整条塞擦音静默丢弃
+   ——顺带修复的潜伏 bug）。
+2. **`FORMANT_CHAR_ALIAS`**：7 个带附加符的数据质量符号（ḍ ṭ ṇ ṣ ẓ ś ź）
+   按 IPA 附加符约定解码（点下=卷舌系列、锐音符=硬腭塞擦/擦音），
+   ậ → a（李方桂表残留）。**仅合成侧解码**——读音数据不动，eSpeak 侧
+   报告（SILENT_FROZEN / dropped_symbols / 能力档）完全不变。
+3. **`synthesize_text` 逐词路由**：短语内只要有一个词含 eSpeak 实测
+   静默丢弃音素，该短语改逐词路由——干净词仍连续打包 eSpeak（保留
+   内部韵律），被丢音素的词逐个走共振峰；eSpeak 整组失败时该组降级
+   逐词共振峰。
+4. **UI**：robot/composer 逐字表丢段标注补「，转共振峰」（含被丢音段的
+   词整词转共振峰，音段不再缺，音色不同）；composer 帮助行同步改写。
+5. **能力报告**：`_formant_status` 同样解码 alias 再查参数表 → 各体系
+   `system_capability_report` 的 formant_full/formant_partial 活算数字
+   整体变化（eSpeak 侧数字冻结不变）；`test_formant_status_uses_real_engine_sets`
+   的 ɡ/ȶ pin 由 SILENT → OK。
+
+**验证**：`run_feat_tests.py` 168 → **174 项全绿**（+6：alias 解码、17 条
+新建参数长度确定性、路由谓词、逐词路由行为 3 条——干净词打包 / 静默词
+转共振峰 / 两引擎间停顿）。活体冒烟：`synthesize_text('tɕiɛn ɣɑŋ')` →
+eSpeak "tɕiɛn" 21503 采样点 + 共振峰 "ɣɑŋ" 6614 采样点（0.30s，
+ɣ+ɑ+ŋ 三段全部发声），无缺段。
+
+提交 30df75a。
 
 ### 下一阶段（第四阶段余下，用户已定顺序）
 
@@ -408,9 +435,10 @@ pin 需改；`system_capability_report` 的 formant_* 活算数字会整体变�
 | 古韵合成 eSpeak | ✅ 32540 采样点 / 1.48s |
 | Edge TTS 现代朗读 | ✅ MP3 |
 | 三时期音频对照（东汉 / 中古王力 / 现代） | ✅ `language/era_audio.py`，robot 面板三列 |
-| v5 拟音体系 + 逐字双列 + 研究面板（robot 主界面） | ✅ `robot/app.py`（第五阶段前端并入，2026-11-03），run_feat_tests 168 项全绿 |
+| v5 拟音体系 + 逐字双列 + 研究面板（robot 主界面） | ✅ `robot/app.py`（第五阶段前端并入，2026-11-03），run_feat_tests 174 项全绿 |
 | eSpeak 沙箱兼容（临时文件在应用目录 + rc=0 空文件/RIFF 检测） | ✅ `sound_synth._espeak_wav_path` + 输出校验 |
 | 共振峰回退引擎完整度（ɪ + 预组合带调元音 â ă ï ĕ 等发声） | ✅ `sound_synth.PRECOMPOSED_VOWEL_BASE` / `VOWEL_FORMANTS` |
+| 缺段词整词可出声（13 IPA 符号 + 4 双字塞擦音建模 + 逐词路由 + 附加符解码） | ✅ `sound_synth.CONSONANT_PARAMS` / `FORMANT_CHAR_ALIAS` / `_routed_phrase`（2026-11-03） |
 | 切韵对照（Qieyun） | ✅（依赖坑 2 的 networkx 补丁） |
 | 录音 + 回放 | ✅ selftest True |
 | 语音识别 | ✅ SenseVoice 逐字正确；Vosk 兜底可用 |
