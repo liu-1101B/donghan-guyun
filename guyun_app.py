@@ -167,7 +167,7 @@ def process_input_scholar(classical, system_id, pitch=130):
         level_counts[a.espeak_level] = level_counts.get(a.espeak_level, 0) + 1
         cap = ESPEAK_LEVEL_ZH.get(a.espeak_level, a.espeak_level)
         if a.dropped_tokens:
-            cap += "（丢 " + " ".join(sorted(set(a.dropped_tokens))) + "，转共振峰）"
+            cap += "（丢 " + " ".join(sorted(set(a.dropped_tokens))) + "，eSpeak 近似读）"
         rows.append({"char": ch, "ipa": ipa,
                      "status": "收录" if tag == "covered" else "拼音近似",
                      "cap": cap})
@@ -411,9 +411,10 @@ with col2:
             st.caption(
                 "两列相互独立：**重建状态** = 该学者体系在 Sinica 工作簿里是否有此字的拟音记录"
                 f"（缺字 {len(scholar_info['unknown'])} 个，不用现代拼音补）；"
-                "**合成能力** = 本机 eSpeak-ng 能否发出拟音中的音段——引擎丢掉的音段逐字标注，"
-                "含被丢音段的词整词转共振峰合成（音段不缺，音色不同），"
-                "且「能渲染」不等于音值准确（近似符号按原音素近似发音）。")
+                "**合成能力** = 本机 eSpeak-ng 能否**如实**发出拟音中的音段——"
+                "无法如实发音的音段（实测：多数被替换成声门塞音 [ʔ]、个别整段丢失）逐字标注，"
+                "朗读时按最接近的可用音素近似替代（音色自然、音值近似，标注仍如实反映原符号被引擎丢弃），"
+                "eSpeak 整体失败才降级共振峰合成。")
 
         valid = [a for a in analyses if a is not None] if not scholar_info else []
         if valid:

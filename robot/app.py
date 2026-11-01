@@ -400,7 +400,7 @@ def _gen_worker(job, session, cfg):
                 cap = ESPEAK_LEVEL_ZH.get(a.espeak_level, a.espeak_level)
                 if a.dropped_tokens:
                     cap += "（丢 " + " ".join(
-                        sorted(set(a.dropped_tokens))) + "，转共振峰）"
+                        sorted(set(a.dropped_tokens))) + "，eSpeak 近似读）"
                 scholar_rows.append({"char": ch, "ipa": ipa,
                                      "status": "收录" if tag == "covered"
                                      else "拼音近似",

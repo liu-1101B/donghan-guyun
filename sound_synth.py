@@ -1,15 +1,19 @@
 """ sound_synth.py 东汉洛阳官音 双引擎合成器
 
-eSpeak-ng 优先；含 eSpeak 实测静默丢弃音素的词按词路由到共振峰引擎
-（synthesize_text 逐词路由，2026-11-03 应用户要求补齐共振峰表）；
-eSpeak 整段失败时整短语回退共振峰。
+eSpeak-ng 优先。2026-11-03 起，eSpeak 无法如实发音的 28 个冻结符号
+（实测：27 个被替换成声门塞音 [ʔ]、ɡ 静默丢弃，-x 音素转储）由
+ESPEAK_APPROX_MAP 近似层在合成路径上替换为最接近的可用音素
+（音色自然、音值近似；能力矩阵对原始符号仍如实报 SILENT），
+因此**全部词默认走 eSpeak**。共振峰引擎保留为防御性回退：
+逐词路由中仅当词含近似层未覆盖的丢弃音素（正常不会发生）或
+eSpeak 整段失败时才触发。
 """
 
 import struct, math, wave, io, base64, subprocess, tempfile, os
 import sys
 import numpy as np
 
-from language.phoneme_capability import ESPEAK_IPA_MAP
+from language.phoneme_capability import ESPEAK_IPA_MAP, ESPEAK_APPROX_MAP
 
 SAMPLE_RATE = 22050
 
@@ -69,6 +73,22 @@ def preprocess_ipa(ipa_str):
     return ipa_str
 
 
+def _espeak_approx(clean_ipa):
+    """eSpeak 近似层：把引擎无法如实发音的符号替换为最接近的音素别名。
+
+    单一数据源 :data:`language.phoneme_capability.ESPEAK_APPROX_MAP`
+    （2026-11-03 -x 音素转储实测选型）。在 preprocess_ipa **之后**应用：
+    本表键均为非 ASCII 且不在 ESPEAK_IPA_MAP 中，与前者输出无碰撞，
+    两表先后顺序不影响结果。
+
+    与 FORMANT_CHAR_ALIAS 同属**合成侧解码**：只决定"怎么读出来"，
+    不改数据、不改能力矩阵（classify_symbol 对原始符号仍报 SILENT）。
+    """
+    if not clean_ipa:
+        return ""
+    return "".join(ESPEAK_APPROX_MAP.get(ch, ch) for ch in clean_ipa)
+
+
 def _espeak_wav_path():
     """eSpeak 临时 wav 路径。
 
@@ -94,7 +114,9 @@ def _espeak_wav_path():
 
 def synth_with_espeak(ipa_parts, pitch=130):
     """调用 eSpeak-ng 并返回 numpy 数组，使用 [[ipa]] 原生语法。
-    停顿标记 (. 和 ,) 在调用前已被 synthesize_text 过滤，此处只处理纯 IPA。"""
+    停顿标记 (. 和 ,) 在调用前已被 synthesize_text 过滤，此处只处理纯 IPA。
+    每个词单独包一层 [[...]]（词内无空格，空格即词界）。
+    词内先 preprocess_ipa（映射表）再 _espeak_approx（近似层）。"""
     if not ipa_parts:
         return None
 
@@ -102,7 +124,7 @@ def synth_with_espeak(ipa_parts, pitch=130):
     for ipa in ipa_parts:
         if ipa in (".", ",", "?", "") or not ipa.strip():
             continue
-        clean_ipa = preprocess_ipa(ipa)
+        clean_ipa = _espeak_approx(preprocess_ipa(ipa))
         ipa_segments.append(f"[[{clean_ipa}]]")
 
     if not ipa_segments:
@@ -414,15 +436,20 @@ def synth_with_formant(ipa_str, pitch=120):
 # ============================================================
 
 def _word_dropped_by_espeak(word_ipa):
-    """词内是否含 eSpeak 实测静默丢弃（SILENT_FROZEN）的音素。
+    """词内是否含 eSpeak 无法读出**且近似层也无法替代**的音素。
 
     判定依据 language.phoneme_capability.classify_symbol 的实测冻结矩阵，
-    不猜测。此类词在 synthesize_text 里整体转共振峰，否则 eSpeak 输出会缺段。
+    不猜测。SILENT 符号若被 ESPEAK_APPROX_MAP 覆盖（当前 28 个全覆盖），
+    朗读时由近似层替换成可用音素，**不再**触发共振峰路由；只有未覆盖的
+    SILENT 符号才让该词整体转共振峰。当前映射下本谓词恒为 False，
+    保留为防御性回退（近似层删键 / 新符号出现时自动生效）。
     """
     from language.phoneme_capability import classify_symbol, SILENT  # 惰性导入防循环
+    # ESPEAK_APPROX_MAP 用模块级绑定（文件头已导入），测试可临时换表验证
+    # 近似层缺键的防御性路径
     for tok in tokenize_ipa(word_ipa):
         for ch in tok:
-            if classify_symbol(ch) == SILENT:
+            if classify_symbol(ch) == SILENT and ch not in ESPEAK_APPROX_MAP:
                 return True
     return False
 
@@ -440,9 +467,10 @@ def _phrase_formant_fallback(words, pitch, word_gap):
 
 
 def _routed_phrase(words, pitch, word_gap):
-    """短语内逐词路由：eSpeak 干净词仍连续打包一次调用（保留内部韵律），
-    含 eSpeak 静默丢弃音素的词逐个走共振峰；eSpeak 整组失败时该组
-    降级为逐词共振峰。"""
+    """短语内逐词路由：默认全部词连续打包交给 eSpeak（28 个原"静默"
+    符号已由近似层 _espeak_approx 替换成可用音素）。仅当词含近似层
+    未覆盖的丢弃音素（防御性情形）时该词单独走共振峰；eSpeak 整组
+    硬失败时该组降级为逐词共振峰。"""
     chunks = []
     run = []
 
@@ -470,15 +498,16 @@ def _routed_phrase(words, pitch, word_gap):
 
 
 def synthesize_text(ipa_text, word_gap=0.08, pitch=130, tone_list=None):
-    """统一合成接口：eSpeak-ng 优先，按词路由共振峰。返回 numpy 数组
+    """统一合成接口：eSpeak-ng 优先，按词路由共振峰（防御性）。返回 numpy 数组
 
     停顿处理策略：按标点分组为短语，每个短语整体交给 eSpeak-ng，
     短语之间在 numpy 层插入静音，不做音频切割。
 
-    逐词路由（2026-11-03 应用户要求）：短语内只要有一个词含 eSpeak
-    实测静默丢弃的音素，该短语改为逐词路由——干净词仍连续打包交给
-    eSpeak，被丢词走共振峰，两个引擎的音频段按词序拼接。短语全部
-    干净时行为与旧版一致（整短语一次 eSpeak 调用）。
+    逐词路由：短语内逐词判定——含"近似层未覆盖的丢弃音素"的词单独
+    走共振峰，其余词连续打包交给 eSpeak。自 2026-11-03 近似层
+    （ESPEAK_APPROX_MAP）覆盖全部 28 个冻结符号后，正常数据里该
+    路由恒不触发，全部词走 eSpeak；保留它只为近似层删键或出现新
+    符号时自动兜底。eSpeak 整组硬失败时该组降级逐词共振峰。
     """
     if not ipa_text or not ipa_text.strip():
         return np.array([])

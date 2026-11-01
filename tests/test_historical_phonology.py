@@ -852,8 +852,10 @@ class PhonemeCapabilityTests(unittest.TestCase):
 
     def test_espeak_map_is_single_source_of_truth_for_preprocess(self):
         # 23 个映射、顺序敏感：整串过 preprocess_ipa 应得确定结果
+        # 期望值含 2026-11-03 修复的 7 个值（ɔ→o ɐ→a æ→a ʂ→S ʐ→Z ʌ→a ɤ→a；
+        # 旧值 O/V/{/7 在 zh 声音下不发音、s`/z` 的反引号截断 IPA 段）
         src = "\u02b0\u02b7\u02b2\u0268\u0259\u025b\u0254\u0251\u0250\u0252\u00e6\u014b\u0235\u0291\u0255\u0282\u0290\u0294\u0266\u028c\u0264\u026f\u0289"
-        self.assertEqual(preprocess_ipa(src), "hwj1@EOAVQ{NJZSs`z`?hV7uu")
+        self.assertEqual(preprocess_ipa(src), "hwj1@EoAaQaNJZSSZ?haauu")
         # 映射表每个键都确实被替换
         for ch, alias in ESPEAK_IPA_MAP.items():
             self.assertNotIn(ch, preprocess_ipa(ch), ch)
@@ -963,14 +965,25 @@ class PhonemeCapabilityTests(unittest.TestCase):
             self.assertGreater(float(np.max(np.abs(audio))), 0, repr(ch))
 
     def test_word_routing_predicate(self):
-        # 路由判定依据实测冻结矩阵（SILENT_FROZEN），不猜测
+        # 路由判定依据实测冻结矩阵（SILENT_FROZEN）+ 近似层覆盖，不猜测
+        # 2026-11-03：28 个冻结符号全被 ESPEAK_APPROX_MAP 覆盖 →
+        # 含冻结符号的词也由 eSpeak 近似读出，不再路由共振峰
         import sound_synth
-        self.assertTrue(sound_synth._word_dropped_by_espeak("\u0263\u0251\u014b"))      # ɣɑŋ
-        self.assertTrue(sound_synth._word_dropped_by_espeak("\u026a"))                 # ɪ
-        self.assertTrue(sound_synth._word_dropped_by_espeak("\u1e6d\u02b0"))           # ṭʰ（数据质量）
+        self.assertFalse(sound_synth._word_dropped_by_espeak("\u0263\u0251\u014b"))      # ɣɑŋ（近似 x）
+        self.assertFalse(sound_synth._word_dropped_by_espeak("\u026a"))                 # ɪ（近似 i）
+        self.assertFalse(sound_synth._word_dropped_by_espeak("\u1e6d\u02b0"))           # ṭʰ（近似 t）
         self.assertFalse(sound_synth._word_dropped_by_espeak("t\u0255i\u0259n"))       # tɕiɛn
         self.assertFalse(sound_synth._word_dropped_by_espeak("t\u0282\u02b0\u0251\u014b"))  # tʂʰɑŋ
         self.assertFalse(sound_synth._word_dropped_by_espeak("\u00e2"))                # â 是 approx 不是 silent
+        # 防御性情形：近似层缺键（模拟删表）→ 含冻结符号的词恢复转共振峰
+        real = sound_synth.ESPEAK_APPROX_MAP
+        sound_synth.ESPEAK_APPROX_MAP = {}
+        try:
+            self.assertTrue(sound_synth._word_dropped_by_espeak("\u0263\u0251\u014b"))
+            self.assertTrue(sound_synth._word_dropped_by_espeak("\u026a"))
+            self.assertFalse(sound_synth._word_dropped_by_espeak("t\u0255i\u0259n"))
+        finally:
+            sound_synth.ESPEAK_APPROX_MAP = real
 
     def test_routing_clean_phrase_single_espeak_call(self):
         # 短语无被丢音素 → 一次 eSpeak 调用（旧行为不变），共振峰不参与
@@ -993,7 +1006,32 @@ class PhonemeCapabilityTests(unittest.TestCase):
         self.assertEqual(len(audio), 100)
 
     def test_routing_silent_word_goes_formant(self):
-        # 短语含被丢音素 → 干净词打包 eSpeak，被丢词逐个走共振峰
+        # 防御性路径（模拟近似层缺键）：短语含未覆盖的冻结符号 →
+        # 干净词打包 eSpeak，该词逐个走共振峰
+        import numpy as np
+        import sound_synth
+        calls_e, calls_f = [], []
+        real_e, real_f = sound_synth.synth_with_espeak, sound_synth.synth_with_formant
+        real_approx = sound_synth.ESPEAK_APPROX_MAP
+        sound_synth.synth_with_espeak = lambda parts, pitch=130: (
+            calls_e.append(tuple(parts)), np.full(100, 0.5, dtype=np.float32))[1]
+        sound_synth.synth_with_formant = lambda word, pitch=120: (
+            calls_f.append(word), np.full(200, 0.5, dtype=np.float32))[1]
+        sound_synth.ESPEAK_APPROX_MAP = {}
+        try:
+            audio = sound_synth.synthesize_text("t\u0255i\u0259n \u0263\u0251\u014b",
+                                                word_gap=0.0)
+        finally:
+            sound_synth.synth_with_espeak = real_e
+            sound_synth.synth_with_formant = real_f
+            sound_synth.ESPEAK_APPROX_MAP = real_approx
+        self.assertEqual(calls_e, [("t\u0255i\u0259n",)])
+        self.assertEqual(calls_f, ["\u0263\u0251\u014b"])
+        self.assertEqual(len(audio), 300)  # eSpeak 100 + 共振峰 200（word_gap=0）
+
+    def test_routing_approximated_word_stays_espeak(self):
+        # 2026-11-03：冻结符号已被近似层覆盖 → 不再路由共振峰，
+        # 全部词连续打包交给 eSpeak 一次调用
         import numpy as np
         import sound_synth
         calls_e, calls_f = [], []
@@ -1008,26 +1046,30 @@ class PhonemeCapabilityTests(unittest.TestCase):
         finally:
             sound_synth.synth_with_espeak = real_e
             sound_synth.synth_with_formant = real_f
-        self.assertEqual(calls_e, [("t\u0255i\u0259n",)])
-        self.assertEqual(calls_f, ["\u0263\u0251\u014b"])
-        self.assertEqual(len(audio), 300)  # eSpeak 100 + 共振峰 200（word_gap=0）
+        self.assertEqual(calls_e, [("t\u0255i\u0259n", "\u0263\u0251\u014b")])
+        self.assertEqual(calls_f, [])
+        self.assertEqual(len(audio), 100)
 
     def test_routing_pause_between_engines(self):
         # 两引擎之间的停顿：eSpeak 组先出、停顿静音、共振峰词随后
+        # （模拟近似层缺键，让被丢词仍走共振峰以覆盖双引擎拼接路径）
         import numpy as np
         import sound_synth
         calls_e, calls_f = [], []
         real_e, real_f = sound_synth.synth_with_espeak, sound_synth.synth_with_formant
+        real_approx = sound_synth.ESPEAK_APPROX_MAP
         sound_synth.synth_with_espeak = lambda parts, pitch=130: (
             calls_e.append(tuple(parts)), np.full(100, 0.5, dtype=np.float32))[1]
         sound_synth.synth_with_formant = lambda word, pitch=120: (
             calls_f.append(word), np.full(200, 0.5, dtype=np.float32))[1]
+        sound_synth.ESPEAK_APPROX_MAP = {}
         try:
             audio = sound_synth.synthesize_text("t\u0255i\u0259n . \u0263\u0251\u014b",
                                                 word_gap=0.0)
         finally:
             sound_synth.synth_with_espeak = real_e
             sound_synth.synth_with_formant = real_f
+            sound_synth.ESPEAK_APPROX_MAP = real_approx
         self.assertEqual(calls_e, [("t\u0255i\u0259n",)])
         self.assertEqual(calls_f, ["\u0263\u0251\u014b"])
         self.assertEqual(len(audio),
@@ -1394,6 +1436,74 @@ class SoundSynthEngineRobustnessTests(unittest.TestCase):
             self.assertGreater(len(audio), 1000)
         finally:
             sound_synth.subprocess.run = real_run
+
+    # -- eSpeak 近似层（2026-11-03，-x 音素转储实测）---------------------------
+
+    def test_espeak_approx_map_covers_all_frozen(self):
+        """近似层契约：覆盖全部 28 个冻结符号，值为已实测可发音的 ASCII
+        token，禁反引号（截断 IPA 段）、禁空格（词界），且与映射表键集不相交。"""
+        from language import phoneme_capability as pc
+        for ch in pc.SILENT_FROZEN:
+            self.assertIn(ch, pc.ESPEAK_APPROX_MAP, repr(ch))
+        for ch, v in pc.ESPEAK_APPROX_MAP.items():
+            self.assertTrue(v and all(ord(c) < 128 for c in v), repr((ch, v)))
+            self.assertNotIn("`", v, repr((ch, v)))
+            self.assertNotIn(" ", v, repr((ch, v)))
+        self.assertFalse(set(pc.ESPEAK_APPROX_MAP) & set(pc.ESPEAK_IPA_MAP))
+
+    def test_espeak_approx_values_measured_speaking(self):
+        """-x 音素转储回归：近似层每个值都产出真实音素（旧行为：27 个原始
+        符号 → ? 即 [ʔ]、ɡ → 空；近似值必须是真音素且后随元音完好=无截断）。"""
+        import subprocess
+        from language import phoneme_capability as pc
+        import sound_synth as ss
+        exe, env = ss.get_espeak_path(), ss.get_espeak_env()
+        for v in sorted(set(pc.ESPEAK_APPROX_MAP.values())):
+            p = subprocess.run(
+                [exe, "-v", "zh", "-x", "[[%sA]]" % v],
+                capture_output=True, text=True, encoding="utf-8",
+                errors="replace", timeout=15, env=env)
+            phon = " | ".join(l for l in p.stdout.splitlines() if l.strip())
+            self.assertNotIn("?", phon, repr(v))
+            self.assertIn(v, phon, repr(v))
+            self.assertIn("A55", phon, repr(v))
+
+    def test_repaired_ipa_map_values_measured_speaking(self):
+        """2026-11-03 回归：映射表全部现值（含修复的 7 个）都产出真实音素、
+        无 ?、无整段丢失。（旧值 O/V/7/{ 产出空音素=0.43 s 静默、
+        s`/z` 反引号截断 IPA 段；"1" 例外为元音附加符，行为与旧表一致。）"""
+        import subprocess
+        from language import phoneme_capability as pc
+        import sound_synth as ss
+        exe, env = ss.get_espeak_path(), ss.get_espeak_env()
+        for v in dict.fromkeys(pc.ESPEAK_IPA_MAP.values()):
+            p = subprocess.run(
+                [exe, "-v", "zh", "-x", "[[%sA]]" % v],
+                capture_output=True, text=True, encoding="utf-8",
+                errors="replace", timeout=15, env=env)
+            phon = " | ".join(l for l in p.stdout.splitlines() if l.strip())
+            self.assertTrue(phon, repr(v))
+            # "?" 豁免：ʔ→? 在 eSpeak 音素字母里就是声门塞音本体（非错误占位）
+            if v != "?":
+                self.assertNotIn("?", phon, repr(v))
+            self.assertIn("A", phon, repr(v))
+
+    def test_approximated_silent_words_measured_lengths(self):
+        """生产词形实测钉住（eSpeak-ng 1.52 + 新映射/近似层）：
+        ɣɑŋ 带真实起始音素（比无起始的 ɑŋ 长，旧值 ? 即 [ʔ] 不占时长）；
+        ʂ/ʐ/tʂʰɑŋ 元音+韵尾不再被反引号截断；ɔŋ 不再静默；ɪ 是真元音。"""
+        import sound_synth as ss
+        a_base = ss.synth_with_espeak(["\u0251\u014b"])    # ɑŋ → AN
+        a_x = ss.synth_with_espeak(["\u0263\u0251\u014b"]) # ɣɑŋ → xAN
+        self.assertIsNotNone(a_base)
+        self.assertIsNotNone(a_x)
+        self.assertGreater(len(a_x), len(a_base))
+        self.assertEqual(len(a_base), 16418)
+        self.assertEqual(len(a_x), 18990)
+        self.assertEqual(len(ss.synth_with_espeak(["\u0282\u0251\u014b"])), 19141)  # ʂɑŋ
+        self.assertEqual(len(ss.synth_with_espeak(["t\u0282\u02b0\u0251\u014b"])), 21354)  # tʂʰɑŋ
+        self.assertEqual(len(ss.synth_with_espeak(["\u0254\u014b"])), 16419)  # ɔŋ
+        self.assertEqual(len(ss.synth_with_espeak(["\u026a"])), 14521)  # ɪ → i
 
     def test_formant_speaks_precomposed_accented_vowels(self):
         """预组合带调元音（语料实测 â ă ï ĕ 共约 5000 处）旧表一律不发声。"""
