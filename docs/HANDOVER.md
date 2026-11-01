@@ -1,6 +1,6 @@
 # 交接说明（给下一个会话／模型）
 
-> 更新时间：2026-11-03（第五阶段前端并入：robot = v5 主界面）　分支：`feat/historical-phonology-foundation`
+> 更新时间：2026-11-03（声音合成修复：eSpeak 临时文件位置 / rc=0 空文件检测 + 共振峰元音表 + 覆盖率表渲染；robot = v5 主界面）　分支：`feat/historical-phonology-foundation`
 
 新会话接手时，先读这一页，再读 [`docs/v5-goal.md`](v5-goal.md)（六阶段路线与逐阶段差距）
 和 [`docs/HISTORICAL_PHONOLOGY_ARCHITECTURE.md`](HISTORICAL_PHONOLOGY_ARCHITECTURE.md)（数据与引擎架构）。
@@ -10,11 +10,11 @@
 - 仓库根：`donghan-guyin/`，当前根目录检出的是 **`main`**
 - 本分支的工作树：**`donghan-guyin/.wt-feat-phon/`** ← 所有开发都在这里
 - 分支：`feat/historical-phonology-foundation`
-- 状态：82 提交已推送 `origin`（截至 2026-10-31）；**2026-11-03 新增 5 提交待推送**：
-  `1758fe4`（CI：先装音韵测试依赖再跑套件）+ `dae94c1`（仓库引用统一为 donghan-guyun）
-  + `3ad1727`（HANDOVER：CI 依赖 / 改名 / 推送失败记录）
-  + `804db34`（逐音素合成验证报告 + 185 行多音字核验集）
-  + `0e8ce5e`（修 context≠classical 时 word_at 错位 + 2 项回归测试）
+- 状态：**本地 = 远程**（截至 2026-11-03 已推送 `b97a9a7` ← `8a7d037` ← `c067139`；
+  8a7d037 = v5 robot 主界面并入，b97a9a7 = 修复 robot 冒烟/CI 细节，
+  更早的 5 提交 `1758fe4`/`dae94c1`/`3ad1727`/`804db34`/`0e8ce5e` 均已在链上）。
+  推送凭据：一次性 PAT 已存入 Windows 凭据管理器（git credential manager），
+  推送若失败先查 `api.github.com` 连通性并重试（github.com:443 链路不稳）。
 - 仓库已改名为 **`donghan-guyun`**：origin 现为
   `https://github.com/liu-1101B/donghan-guyun.git`（本地 remote 已更新；旧 URL
   `donghan-guyin` 会 301 重定向但仍可用）
@@ -339,6 +339,50 @@ $env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"
 :8502 重启（`STREAMLIT_GLOBAL_DEVELOPMENT_MODE=false` + 全量 PYTHONPATH +
 CWD=worktree，日志 `.robot_server.log`）HTTP 200、无 Traceback。
 
+### 声音合成修复（2026-11-03，用户报告「有的字正常、有的像退回共振峰」）
+
+**诊断结论（日志可证）**：用户会话期间 robot :8502（13:51–14:00 渲染 9 次）
+与 composer :8501（12:39/13:50 渲染 3 次）的日志里**零条**
+`[sound_synth] eSpeak-ng error:` → 按句共振峰兜底**从未触发**。
+听感差异的真实原因：eSpeak-ng 1.52 `-v zh` 对 28 个实测符号（ȶ ȡ ɣ ʃ ɽ
+dʒ tʃ ɡ ɪ …，冻结清单见 `tests/test_historical_phonology.py::test_frozen_silent_symbols`）
+**整段静默丢弃**——如 行→ɣɑŋ 丢 ɣ、中→ȶǐuŋ 丢 ȶ，音节听起来「缺一段」。
+跨体系对照（东汉 legacy 干净 vs 学者体系缺声母）即可复现，UI 逐字表已注明「丢 X」。
+
+**已修（本次提交）**：
+
+1. `sound_synth.synth_with_espeak`：临时 wav 不再用 `%TEMP%`——沙箱化进程树里
+   原生子进程 espeak.exe 只能写工作区内（写 %TEMP% 报 `Can't write to` 且
+   **退出码仍为 0**，`check=True` 抓不到）。新增 `_espeak_wav_path()`：优先
+   `<应用目录>/.tmp_espeak/`（`tempfile.mkstemp`），不可写才退回系统临时目录；
+   去掉 `check=True`，rc≠0 → RuntimeError；并验证输出文件存在、size>0、
+   RIFF 头，任何失败走原 `except → print → None`（整句回退共振峰，但现在
+   **必然留日志**，不再是静默空音）。
+2. 共振峰引擎元音表：补 `ɪ`；新增 `PRECOMPOSED_VOWEL_BASE`（约 50 个带调
+   元音 → 基础键）——语料实测预组合带调元音共约 5000 处（李方桂中古表
+   â=3256 ă=697 ï=675 ĕ=343，东同龢 2 处），旧表无条目 → 回退引擎对这些
+   元音**完全不发声**。`is_vowel` / formant 查找改走 `_vowel_base()`。
+   分解型（王力 i+U+030C 等，caron 29573 处为主）不受影响（基础元音原本就在表内）。
+3. `robot/app.py` + `guyun_app.py`（composer v3）：覆盖率表「缺陷行 / 空韻母 /
+   韻部数 / 備註行 / 零声母行」列 scholar 行是 int、其他行是 `"—"` →
+   `pyarrow.lib.ArrowTypeError: Expected bytes, got a 'int' object`（两应用日志均现：
+   robot 9 次、composer 3 次，Streamlit 吞掉后表格渲染缺列）→ `st.dataframe`
+   前统一 str 化。
+
+**测试**：`run_feat_tests.py` 161 → **168 项全绿**。新增 7 项
+（`SoundSynthEngineRobustnessTests`）：临时路径在应用目录内；rc=0+无文件 → None；
+rc=0+0 字节 → None；rc≠0 → None；rc=0+有效 RIFF → 返回音频；预组合带调元音
+â ă ï ĕ ǐ ǔ 共振峰全部发声；ɪ 发声。`test_formant_status_uses_real_engine_sets`
+的 ɪ pin 由 SILENT → OK（已进元音表，防漂移 pin 同步更新）。
+
+**待用户拍板（未动）**：共振峰引擎升级——`CONSONANT_PARAMS` 补
+ȶ ȡ ɽ ɖ ʈ ɳ ɱ ɲ ɟ ʅ ʎ ɡ，并按词路由（干净词走 eSpeak、含 SILENT 词走共振峰
++ UI 如实标注音色）。代价：共振峰音色较机械；ɡ/ȶ/ɪ 的 `_formant_status`
+pin 需改；`system_capability_report` 的 formant_* 活算数字会整体变化。
+**不要单方面实施**。
+
+**文档**：`v5-goal.md` 日期归一化（2026-11-05 → 2026-11-03 两处）。
+
 ### 下一阶段（第四阶段余下，用户已定顺序）
 
 - ✅ ① 一句话多时期音频对照（东汉 / 中古 / 现代同句三版）——已完成；
@@ -364,7 +408,9 @@ CWD=worktree，日志 `.robot_server.log`）HTTP 200、无 Traceback。
 | 古韵合成 eSpeak | ✅ 32540 采样点 / 1.48s |
 | Edge TTS 现代朗读 | ✅ MP3 |
 | 三时期音频对照（东汉 / 中古王力 / 现代） | ✅ `language/era_audio.py`，robot 面板三列 |
-| v5 拟音体系 + 逐字双列 + 研究面板（robot 主界面） | ✅ `robot/app.py`（第五阶段前端并入，2026-11-03），run_feat_tests 161 项全绿 |
+| v5 拟音体系 + 逐字双列 + 研究面板（robot 主界面） | ✅ `robot/app.py`（第五阶段前端并入，2026-11-03），run_feat_tests 168 项全绿 |
+| eSpeak 沙箱兼容（临时文件在应用目录 + rc=0 空文件/RIFF 检测） | ✅ `sound_synth._espeak_wav_path` + 输出校验 |
+| 共振峰回退引擎完整度（ɪ + 预组合带调元音 â ă ï ĕ 等发声） | ✅ `sound_synth.PRECOMPOSED_VOWEL_BASE` / `VOWEL_FORMANTS` |
 | 切韵对照（Qieyun） | ✅（依赖坑 2 的 networkx 补丁） |
 | 录音 + 回放 | ✅ selftest True |
 | 语音识别 | ✅ SenseVoice 逐字正确；Vosk 兜底可用 |
