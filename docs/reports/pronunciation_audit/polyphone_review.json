@@ -1,0 +1,2991 @@
+{
+ "method_count": {
+  "fallback_first": 162,
+  "empirical": 53,
+  "single": 55
+ },
+ "results": [
+  {
+   "id": "xing-ping",
+   "char": "行",
+   "context": "三人行，必有我師焉",
+   "meaning": "行走、行为（xíng，中古平声）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɣɑn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɣaŋ",
+      "ɣɑn",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑn 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ɣâng",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɣâng",
+      "ɣɐng"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣâng 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɣaŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɣɐŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "词「三人行」现代调 2 → 平声；音韵地位 匣開二庚平；同类字一致读 ɣɐŋ"
+    }
+   }
+  },
+  {
+   "id": "xing-qu",
+   "char": "行",
+   "context": "行伍",
+   "meaning": "行列（háng，中古去声）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɣɑn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɣaŋ",
+      "ɣɑn",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑn 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ɣâng",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɣâng",
+      "ɣɐng"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣâng 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɣɑŋ",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɣaŋ",
+      "ɣɑŋ"
+     ],
+     "note": "多音字（4 条）未能确定（该音韵地位类无一致读法）；按首条 ɣɑŋ 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɣɐŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ɣɐŋ",
+      "ɣɑŋ"
+     ],
+     "note": "词「行伍」现代调 2 → 平声；音韵地位 匣開二庚平；同类字一致读 ɣɐŋ"
+    }
+   }
+  },
+  {
+   "id": "chong-qu",
+   "char": "重",
+   "context": "慎重大事",
+   "meaning": "重要（zhòng，中古去声）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ȡǐwoŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡǐwoŋ"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ȡǐwok 与本字各行均不相符）；按首条 ȡǐwoŋ 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ȡʰjuoŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰjuoŋ"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ȡʰjuok 与本字各行均不相符）；按首条 ȡʰjuoŋ 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɖiuoŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɖiuoŋ"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ɖiuok 与本字各行均不相符）；按首条 ɖiuoŋ 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ḍjwong",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ḍjwong"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ḍjwok 与本字各行均不相符）；按首条 ḍjwong 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ȡʰǐuŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰǐuŋ"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ȡʰǐuk 与本字各行均不相符）；按首条 ȡʰǐuŋ 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ȡʰi̯woŋ",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰi̯woŋ"
+     ],
+     "note": "多音字（2 条）未能确定（一致读法 ȡʰi̯wok 与本字各行均不相符）；按首条 ȡʰi̯woŋ 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "le-ru",
+   "char": "樂",
+   "context": "不亦樂乎",
+   "meaning": "快乐（lè，中古入声药韵）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "词「不亦樂乎」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "dongtonghe_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "词「不亦樂乎」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "zhoufagao_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋok"
+     ],
+     "note": "词「不亦樂乎」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "lifanggui_mc": {
+     "selected": "ngau",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "lâk",
+      "ngau",
+      "ngåk"
+     ],
+     "note": "词「不亦樂乎」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ngau"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ŋɔu",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "lɑk",
+      "ŋɔk",
+      "ŋɔu"
+     ],
+     "note": "词「不亦樂乎」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋɔu"
+    },
+    "karlgren_mc": {
+     "selected": "ŋau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "多音字（3 条）未能确定（该音韵地位类无一致读法）；按首条 ŋau 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "le-qu",
+   "char": "樂",
+   "context": "仁者樂山，知者樂水",
+   "meaning": "喜好（yào，中古去声效韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "词「樂山」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "dongtonghe_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "词「樂山」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "zhoufagao_mc": {
+     "selected": "ŋau",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋok"
+     ],
+     "note": "词「樂山」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋau"
+    },
+    "lifanggui_mc": {
+     "selected": "ngau",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "lâk",
+      "ngau",
+      "ngåk"
+     ],
+     "note": "词「樂山」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ngau"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ŋɔu",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "lɑk",
+      "ŋɔk",
+      "ŋɔu"
+     ],
+     "note": "词「樂山」现代调 4 → 去/入声；音韵地位 疑肴去；同类字一致读 ŋɔu"
+    },
+    "karlgren_mc": {
+     "selected": "ŋau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "lɑk",
+      "ŋau",
+      "ŋɔk"
+     ],
+     "note": "多音字（3 条）未能确定（该音韵地位类无一致读法）；按首条 ŋau 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "chang-ping",
+   "char": "長",
+   "context": "長短",
+   "meaning": "长短（cháng，中古平声宕韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ȶǐaŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ȡǐaŋ",
+      "ȶǐaŋ"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶǐaŋ"
+    },
+    "dongtonghe_mc": {
+     "selected": "ȶjɑŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ȡʰjɑŋ",
+      "ȶjɑŋ"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶjɑŋ"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʈiɑŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ɖiɑŋ",
+      "ʈiɑŋ"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ʈiɑŋ"
+    },
+    "lifanggui_mc": {
+     "selected": "ṭjang",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ḍjang",
+      "ṭjang"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ṭjang"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ȶǐɑŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ȡʰǐɑŋ",
+      "ȶǐɑŋ"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶǐɑŋ"
+    },
+    "karlgren_mc": {
+     "selected": "ȶi̯aŋ",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ȡʰi̯aŋ",
+      "ȶi̯aŋ"
+     ],
+     "note": "词「長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶi̯aŋ"
+    }
+   }
+  },
+  {
+   "id": "chang-shang",
+   "char": "長",
+   "context": "年長",
+   "meaning": "年长、排行（zhǎng，中古上声）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ȶǐaŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ȡǐaŋ",
+      "ȶǐaŋ"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶǐaŋ"
+    },
+    "dongtonghe_mc": {
+     "selected": "ȶjɑŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰjɑŋ",
+      "ȶjɑŋ"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶjɑŋ"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʈiɑŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ɖiɑŋ",
+      "ʈiɑŋ"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ʈiɑŋ"
+    },
+    "lifanggui_mc": {
+     "selected": "ṭjang",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ḍjang",
+      "ṭjang"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ṭjang"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ȶǐɑŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰǐɑŋ",
+      "ȶǐɑŋ"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶǐɑŋ"
+    },
+    "karlgren_mc": {
+     "selected": "ȶi̯aŋ",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰi̯aŋ",
+      "ȶi̯aŋ"
+     ],
+     "note": "词「年長」现代调 3 → 上/入声；音韵地位 知開陽上；同类字一致读 ȶi̯aŋ"
+    }
+   }
+  },
+  {
+   "id": "de-ru",
+   "char": "得",
+   "context": "得失之間",
+   "meaning": "得到（dé，中古入声德韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    },
+    "dongtonghe_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    },
+    "zhoufagao_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    },
+    "lifanggui_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    },
+    "chenxinxiong_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    },
+    "karlgren_mc": {
+     "selected": "tək",
+     "method": "single",
+     "status": "pass",
+     "candidates": [
+      "tək"
+     ],
+     "note": ""
+    }
+   }
+  },
+  {
+   "id": "shuo-qu",
+   "char": "說",
+   "context": "游說之士",
+   "meaning": "劝说（shuì，中古去声薛韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɕǐwɛi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "jǐwɛt",
+      "ɕǐwɛi",
+      "ɕǐwɛt"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɕǐwɛi 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɕjuæi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "juæt",
+      "ɕjuæi",
+      "ɕjuæt"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɕjuæi 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɕiuæi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "iuæt",
+      "ɕiuæi",
+      "ɕiuæt"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɕiuæi 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "śjwäi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "jiwät",
+      "śjwäi",
+      "śjwät"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 śjwäi 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɕǐuɛi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ǐuɛt",
+      "ɕǐuɛi",
+      "ɕǐuɛt"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɕǐuɛi 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɕi̯wɛi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɕi̯wɛi",
+      "ɕi̯wɛt"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 ɕi̯wɛi 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "shuo-ru",
+   "char": "說",
+   "context": "子曰，詩雲",
+   "meaning": "言说（shuō，中古入声薛韵）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɕǐwɛi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "jǐwɛt",
+      "ɕǐwɛi",
+      "ɕǐwɛt"
+     ],
+     "note": "多音字（3 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 ɕǐwɛi 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɕjuæi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "juæt",
+      "ɕjuæi",
+      "ɕjuæt"
+     ],
+     "note": "多音字（3 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 ɕjuæi 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɕiuæi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "iuæt",
+      "ɕiuæi",
+      "ɕiuæt"
+     ],
+     "note": "多音字（3 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 ɕiuæi 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "śjwäi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "jiwät",
+      "śjwäi",
+      "śjwät"
+     ],
+     "note": "多音字（3 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 śjwäi 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɕǐuɛi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ǐuɛt",
+      "ɕǐuɛi",
+      "ɕǐuɛt"
+     ],
+     "note": "多音字（3 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 ɕǐuɛi 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɕi̯wɛi",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɕi̯wɛi",
+      "ɕi̯wɛt"
+     ],
+     "note": "多音字（2 条）未能确定（按单字常读；广韵表无属该调类的地位）；按首条 ɕi̯wɛi 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "hua-ping",
+   "char": "華",
+   "context": "灼灼其華",
+   "meaning": "花、华美（huá，中古平声麻韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɣwa",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "hwa",
+      "ɣwa"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 hwa、ɣwa 与本字各行均不相符）；按首条 ɣwa 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɣua",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "xua",
+      "ɣua"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 xua、ɣua 与本字各行均不相符）；按首条 ɣua 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɣua",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "xua",
+      "ɣua"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 xua、ɣua 与本字各行均不相符）；按首条 ɣua 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ɣwa",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "xwa",
+      "ɣwa"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 xwa、ɣwa 与本字各行均不相符）；按首条 ɣwa 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɣua",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "xua",
+      "ɣua"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 xua、ɣua 与本字各行均不相符）；按首条 ɣua 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɣwa",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ɣwa"
+     ],
+     "note": "词「其華」现代调 2 → 平声；音韵地位 匣合二麻平、曉合二麻平；同类字一致读 ɣwa"
+    }
+   }
+  },
+  {
+   "id": "jue-ru",
+   "char": "覺",
+   "context": "覺悟",
+   "meaning": "觉悟（jué，中古入声觉韵）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kau",
+      "kok"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kau",
+      "kåk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "kɔu",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kɔk",
+      "kɔu"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kɔu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "jue-qu",
+   "char": "覺",
+   "context": "夢覺",
+   "meaning": "睡醒（jué，中古去声）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kau",
+      "kok"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kau",
+      "kåk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "kɔu",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kɔk",
+      "kɔu"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kɔu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "kau",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kau",
+      "kɔk"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 kau 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "zai-shang",
+   "char": "載",
+   "context": "萬事勝載",
+   "meaning": "记载（zǎi，中古上声贿韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "tsɒi",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "dzɒi",
+      "tsɒi"
+     ],
+     "note": "词「萬事勝載」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsɒi"
+    },
+    "dongtonghe_mc": {
+     "selected": "tsAi",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "dzʰAi",
+      "tsAi"
+     ],
+     "note": "词「萬事勝載」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsAi"
+    },
+    "zhoufagao_mc": {
+     "selected": "tsəi",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "dzəi",
+      "tsəi"
+     ],
+     "note": "词「萬事勝載」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsəi"
+    },
+    "lifanggui_mc": {
+     "selected": "tsậi",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "dzậi",
+      "tsậi"
+     ],
+     "note": "词「萬事勝載」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsậi"
+    },
+    "chenxinxiong_mc": {
+     "selected": "tsəi",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "dzʰəi",
+      "tsəi"
+     ],
+     "note": "词「萬事勝載」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsəi"
+    },
+    "karlgren_mc": {
+     "selected": "tsɑ̆i",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "dzʰɑ̆i",
+      "tsɑ̆i"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 dzʰɑ̆i、tsɑ̆i 与本字各行均不相符）；按首条 tsɑ̆i 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "zai-qu",
+   "char": "載",
+   "context": "載歌載舞",
+   "meaning": "装载、承载（zài，中古去声泰韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "tsɒi",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "dzɒi",
+      "tsɒi"
+     ],
+     "note": "词「載歌」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsɒi"
+    },
+    "dongtonghe_mc": {
+     "selected": "tsAi",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "dzʰAi",
+      "tsAi"
+     ],
+     "note": "词「載歌」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsAi"
+    },
+    "zhoufagao_mc": {
+     "selected": "tsəi",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "dzəi",
+      "tsəi"
+     ],
+     "note": "词「載歌」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsəi"
+    },
+    "lifanggui_mc": {
+     "selected": "tsậi",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "dzậi",
+      "tsậi"
+     ],
+     "note": "词「載歌」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsậi"
+    },
+    "chenxinxiong_mc": {
+     "selected": "tsəi",
+     "method": "empirical",
+     "status": "FAIL",
+     "candidates": [
+      "dzʰəi",
+      "tsəi"
+     ],
+     "note": "词「載歌」现代调 4 → 去/入声；音韵地位 精咍去、從咍去；同类字一致读 tsəi"
+    },
+    "karlgren_mc": {
+     "selected": "tsɑ̆i",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "dzʰɑ̆i",
+      "tsɑ̆i"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 dzʰɑ̆i、tsɑ̆i 与本字各行均不相符）；按首条 tsɑ̆i 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "hui-qu",
+   "char": "會",
+   "context": "會合",
+   "meaning": "会合（huì，中古去声队韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɣuɑi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kuɑi",
+      "ɣuɑi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣuɑi 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɣuɑi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kuɑi",
+      "ɣuɑi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣuɑi 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɣuɑi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kuɑi",
+      "ɣuɑi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣuɑi 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ɣwâi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kwâi",
+      "ɣwâi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣwâi 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɣuai",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kuai",
+      "ɣuai"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣuai 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ɣwɑi",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "kwɑi",
+      "ɣwɑi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ɣwɑi 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "chuan-qu",
+   "char": "傳",
+   "context": "自傳",
+   "meaning": "传记（zhuàn，中古去声愿韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ȡǐwɛn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡǐwɛn",
+      "ȶǐwɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡǐwɛn 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ȡʰjuæn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰjuæn",
+      "ȶjuæn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰjuæn 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɖiuæn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ɖiuæn",
+      "ʈiuæn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɖiuæn 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ḍjwän",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ḍjwän",
+      "ṭjwän"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ḍjwän 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ȡʰǐuɛn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰǐuɛn",
+      "ȶǐuɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰǐuɛn 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ȡʰi̯wɛn",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ȡʰi̯wɛn",
+      "ȶi̯wɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰi̯wɛn 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "chuan-ping",
+   "char": "傳",
+   "context": "傳習錄",
+   "meaning": "传递（chuán，中古平声仙韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ȡǐwɛn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ȡǐwɛn",
+      "ȶǐwɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡǐwɛn 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ȡʰjuæn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰjuæn",
+      "ȶjuæn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰjuæn 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɖiuæn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ɖiuæn",
+      "ʈiuæn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ɖiuæn 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ḍjwän",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ḍjwän",
+      "ṭjwän"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ḍjwän 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ȡʰǐuɛn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰǐuɛn",
+      "ȶǐuɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰǐuɛn 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ȡʰi̯wɛn",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ȡʰi̯wɛn",
+      "ȶi̯wɛn"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ȡʰi̯wɛn 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "e-qu",
+   "char": "惡",
+   "context": "好逸惡勞",
+   "meaning": "厌恶（wù，中古去声禡韵，零声母）",
+   "flag": "AMBIGUOUS",
+   "systems": {
+    "wangli_mc": {
+     "selected": "u",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "u",
+      "ɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ɑŋ 与本字各行均不相符）；按首条 u 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "uo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "uo",
+      "âk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 âng 与本字各行均不相符）；按首条 uo 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʔu",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ʔu",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "e-ru",
+   "char": "惡",
+   "context": "惡人先告狀",
+   "meaning": "邪恶（è，中古入声锡韵）",
+   "flag": "AMBIGUOUS",
+   "systems": {
+    "wangli_mc": {
+     "selected": "u",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "u",
+      "ɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ɑŋ 与本字各行均不相符）；按首条 u 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "uo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "uo",
+      "âk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 âng 与本字各行均不相符）；按首条 uo 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʔu",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ʔu",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ʔuo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ʔuo",
+      "ʔɑk"
+     ],
+     "note": "多音字（3 条）未能确定（一致读法 ʔɑŋ 与本字各行均不相符）；按首条 ʔuo 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "shu-ru",
+   "char": "數",
+   "context": "數見不失信",
+   "meaning": "屡次（shuò，中古入声屋韵）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ʃǐu",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "suk",
+      "ʃǐu",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃǐu 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʃjuo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "suk",
+      "ʃjuo",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃjuo 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʂiuo",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "suk",
+      "ʂiuo",
+      "ʂok"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʂiuo 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ṣju",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "suk",
+      "ṣju",
+      "ṣåk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ṣju 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʃǐu",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "sok",
+      "ʃǐu",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃǐu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ʂi̯u",
+     "method": "fallback_first",
+     "status": "FAIL",
+     "candidates": [
+      "ʂi̯u",
+      "ʂɔk"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ʂi̯u 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "shu-shang",
+   "char": "數",
+   "context": "數目",
+   "meaning": "数目（shù，中古上声语韵）",
+   "flag": "KNOWN_LIMITATION",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ʃǐu",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "suk",
+      "ʃǐu",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃǐu 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʃjuo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "suk",
+      "ʃjuo",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃjuo 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʂiuo",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "suk",
+      "ʂiuo",
+      "ʂok"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʂiuo 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ṣju",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "suk",
+      "ṣju",
+      "ṣåk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ṣju 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʃǐu",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sok",
+      "ʃǐu",
+      "ʃɔk"
+     ],
+     "note": "多音字（4 条）未能确定（广韵表无属该调类的地位）；按首条 ʃǐu 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "ʂi̯u",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "ʂi̯u",
+      "ʂɔk"
+     ],
+     "note": "多音字（3 条）未能确定（广韵表无属该调类的地位）；按首条 ʂi̯u 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "huan-ping",
+   "char": "還",
+   "context": "還鄉",
+   "meaning": "返回（huán，中古平声桓韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ɣwan",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "zǐwɛn",
+      "ɣwan"
+     ],
+     "note": "词「還鄉」现代调 2 → 平声；音韵地位 匣合刪平；同类字一致读 ɣwan"
+    },
+    "dongtonghe_mc": {
+     "selected": "ɣuan",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "zjuæn",
+      "ɣuan"
+     ],
+     "note": "词「還鄉」现代调 2 → 平声；音韵地位 匣合刪平；同类字一致读 ɣuan"
+    },
+    "zhoufagao_mc": {
+     "selected": "ɣuan",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "ziuæn",
+      "ɣuan"
+     ],
+     "note": "词「還鄉」现代调 2 → 平声；音韵地位 匣合刪平；同类字一致读 ɣuan"
+    },
+    "lifanggui_mc": {
+     "selected": "ɣwan",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "zjwän",
+      "ɣwan"
+     ],
+     "note": "词「還鄉」现代调 2 → 平声；音韵地位 匣合刪平；同类字一致读 ɣwan"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ɣuan",
+     "method": "empirical",
+     "status": "pass",
+     "candidates": [
+      "zǐuɛn",
+      "ɣuan"
+     ],
+     "note": "词「還鄉」现代调 2 → 平声；音韵地位 匣合刪平；同类字一致读 ɣuan"
+    },
+    "karlgren_mc": {
+     "selected": "ɣuan",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "zi̯wɛn",
+      "ɣuan"
+     ],
+     "note": "多音字（2 条）未能确定（一致读法 ɣwan 与本字各行均不相符）；按首条 ɣuan 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "can-ping",
+   "char": "參",
+   "context": "參加",
+   "meaning": "参与（cān，中古平声侵韵）",
+   "flag": null,
+   "systems": {
+    "wangli_mc": {
+     "selected": "ʃǐěm",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sɑm",
+      "tsʰɒm",
+      "tʃʰǐěm",
+      "ʃǐěm"
+     ],
+     "note": "多音字（5 条）未能确定（该音韵地位类无一致读法）；按首条 ʃǐěm 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʃjem",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sɑm",
+      "tsʰAm",
+      "tʃʰjem",
+      "ʃjem"
+     ],
+     "note": "多音字（5 条）未能确定（该音韵地位类无一致读法）；按首条 ʃjem 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʂiɪm",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sɑm",
+      "tsʰem",
+      "tsʰəm",
+      "tʂʰiɪm",
+      "ʂiɪm"
+     ],
+     "note": "多音字（5 条）未能确定（该音韵地位类无一致读法）；按首条 ʂiɪm 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ṣjəm",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sâm",
+      "tshậm",
+      "tṣhjəm",
+      "ṣjəm"
+     ],
+     "note": "多音字（5 条）未能确定（该音韵地位类无一致读法）；按首条 ṣjəm 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʃǐəm",
+     "method": "fallback_first",
+     "status": "pass",
+     "candidates": [
+      "sɑm",
+      "tsʰəm",
+      "tʃʰǐəm",
+      "ʃǐəm"
+     ],
+     "note": "多音字（5 条）未能确定（该音韵地位类无一致读法）；按首条 ʃǐəm 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "tsʰɑ̆m",
+     "method": "empirical",
+     "status": "no_data",
+     "candidates": [
+      "tsʰɑ̆m",
+      "tʂʰi̯əm"
+     ],
+     "note": "词「參加」现代调 1 → 平声；音韵地位 清覃平；同类字一致读 tsʰɑ̆m"
+    }
+   }
+  },
+  {
+   "id": "cha-ping-observe",
+   "char": "差",
+   "context": "參差不齊",
+   "meaning": "参差（cī，中古平声）",
+   "flag": "OBSERVE_ONLY",
+   "systems": {
+    "wangli_mc": {
+     "selected": "tʃʰai",
+     "method": "empirical",
+     "status": "observe",
+     "candidates": [
+      "tʃʰa",
+      "tʃʰai",
+      "tʃʰǐe",
+      "tʃʰɐi"
+     ],
+     "note": "词「參差」现代调 4 → 去/入声；音韵地位 初開佳去；同类字一致读 tʃʰai"
+    },
+    "dongtonghe_mc": {
+     "selected": "tʃʰæi",
+     "method": "empirical",
+     "status": "observe",
+     "candidates": [
+      "tʃʰa",
+      "tʃʰje",
+      "tʃʰæi",
+      "tʃʰɐi"
+     ],
+     "note": "词「參差」现代调 4 → 去/入声；音韵地位 初開佳去；同类字一致读 tʃʰæi"
+    },
+    "zhoufagao_mc": {
+     "selected": "tʂʰæi",
+     "method": "empirical",
+     "status": "observe",
+     "candidates": [
+      "tʂʰa",
+      "tʂʰiɪ",
+      "tʂʰæi",
+      "tʂʰɛi"
+     ],
+     "note": "词「參差」现代调 4 → 去/入声；音韵地位 初開佳去；同类字一致读 tʂʰæi"
+    },
+    "lifanggui_mc": {
+     "selected": "tṣhaï",
+     "method": "empirical",
+     "status": "observe",
+     "candidates": [
+      "tṣha",
+      "tṣhaï",
+      "tṣhjĕ",
+      "tṣhăi"
+     ],
+     "note": "词「參差」现代调 4 → 去/入声；音韵地位 初開佳去；同类字一致读 tṣhaï"
+    },
+    "chenxinxiong_mc": {
+     "selected": "tʃʰæi",
+     "method": "empirical",
+     "status": "observe",
+     "candidates": [
+      "tʃʰa",
+      "tʃʰæi",
+      "tʃʰǐɛ",
+      "tʃʰɐi"
+     ],
+     "note": "词「參差」现代调 4 → 去/入声；音韵地位 初開佳去；同类字一致读 tʃʰæi"
+    },
+    "karlgren_mc": {
+     "selected": "tʂʰie̯",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "tʂʰa",
+      "tʂʰie̯"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 tʂʰie̯ 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "shuai-shang-observe",
+   "char": "率",
+   "context": "循率",
+   "meaning": "遵循、率领（shuài，中古上声术韵）",
+   "flag": "OBSERVE_ONLY",
+   "systems": {
+    "wangli_mc": {
+     "selected": "ʃwi",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ʃwi",
+      "ʃǐuět"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ʃwi 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "ʃjuei",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ʃjuei",
+      "ʃjuet"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ʃjuei 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʂiuɪi",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ʂiuɪi",
+      "ʂiuɪt"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ʂiuɪi 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "ṣjwi",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ṣjuĕt",
+      "ṣjwi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ṣjwi 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "ʃǐue",
+     "method": "single",
+     "status": "observe",
+     "candidates": [
+      "ʃǐue"
+     ],
+     "note": ""
+    },
+    "karlgren_mc": {
+     "selected": "ʂwi",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ʂi̯uĕt",
+      "ʂwi"
+     ],
+     "note": "多音字（2 条）未能确定（该音韵地位类无一致读法）；按首条 ʂwi 读，不作调类推断"
+    }
+   }
+  },
+  {
+   "id": "cheng-ping-observe",
+   "char": "乘",
+   "context": "乘舟",
+   "meaning": "乘坐（chéng，中古平声蒸韵）",
+   "flag": "OBSERVE_ONLY",
+   "systems": {
+    "wangli_mc": {
+     "selected": "dʑǐəŋ",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "dʑǐəŋ"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 dʑǐəŋ 读，不作调类推断"
+    },
+    "dongtonghe_mc": {
+     "selected": "dʑʰjəŋ",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "dʑʰjəŋ"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 dʑʰjəŋ 读，不作调类推断"
+    },
+    "zhoufagao_mc": {
+     "selected": "ʑiɪŋ",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "ʑieŋ",
+      "ʑiɪŋ"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 ʑiɪŋ 读，不作调类推断"
+    },
+    "lifanggui_mc": {
+     "selected": "dźjəng",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "dźjəng"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 dźjəng 读，不作调类推断"
+    },
+    "chenxinxiong_mc": {
+     "selected": "dʑʰǐəŋ",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "dʑʰǐəŋ"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 dʑʰǐəŋ 读，不作调类推断"
+    },
+    "karlgren_mc": {
+     "selected": "dʑʰi̯əŋ",
+     "method": "fallback_first",
+     "status": "observe",
+     "candidates": [
+      "dʑʰi̯əŋ"
+     ],
+     "note": "多音字（2 条）未能确定（广韵表无属该调类的地位）；按首条 dʑʰi̯əŋ 读，不作调类推断"
+    }
+   }
+  }
+ ],
+ "auto": [
+  {
+   "char": "王",
+   "system": "wangli_mc",
+   "selected": "ɣǐwaŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ɣǐwaŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "王",
+   "system": "dongtonghe_mc",
+   "selected": "ɣjuɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ɣjuɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "王",
+   "system": "zhoufagao_mc",
+   "selected": "jiuɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "jiuɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "王",
+   "system": "lifanggui_mc",
+   "selected": "jwang",
+   "method": "fallback_first",
+   "distinct": [
+    "jwang"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "王",
+   "system": "chenxinxiong_mc",
+   "selected": "jǐuɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "jǐuɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "王",
+   "system": "karlgren_mc",
+   "selected": "ji̯waŋ",
+   "method": "empirical",
+   "distinct": [
+    "ji̯waŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "wangli_mc",
+   "selected": "ȶǐuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ȶǐuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "dongtonghe_mc",
+   "selected": "ȶjuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ȶjuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "zhoufagao_mc",
+   "selected": "ʈiuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ʈiuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "lifanggui_mc",
+   "selected": "ṭjung",
+   "method": "fallback_first",
+   "distinct": [
+    "ṭjung"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "chenxinxiong_mc",
+   "selected": "ȶǐoŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ȶǐoŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "中",
+   "system": "karlgren_mc",
+   "selected": "ȶi̯uŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "ȶi̯uŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "wangli_mc",
+   "selected": "dɑu",
+   "method": "single",
+   "distinct": [
+    "dɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "dongtonghe_mc",
+   "selected": "dʰɑu",
+   "method": "single",
+   "distinct": [
+    "dʰɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "zhoufagao_mc",
+   "selected": "dɑu",
+   "method": "single",
+   "distinct": [
+    "dɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "lifanggui_mc",
+   "selected": "dâu",
+   "method": "single",
+   "distinct": [
+    "dâu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "chenxinxiong_mc",
+   "selected": "dʰɑu",
+   "method": "single",
+   "distinct": [
+    "dʰɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "道",
+   "system": "karlgren_mc",
+   "selected": "dʰɑu",
+   "method": "single",
+   "distinct": [
+    "dʰɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "wangli_mc",
+   "selected": "nɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "nɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "dongtonghe_mc",
+   "selected": "nɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "nɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "zhoufagao_mc",
+   "selected": "nɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "nɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "lifanggui_mc",
+   "selected": "nân",
+   "method": "fallback_first",
+   "distinct": [
+    "nân"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "chenxinxiong_mc",
+   "selected": "nɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "nɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "難",
+   "system": "karlgren_mc",
+   "selected": "nɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "nɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "wangli_mc",
+   "selected": "hɑu",
+   "method": "empirical",
+   "distinct": [
+    "hɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "dongtonghe_mc",
+   "selected": "xɑu",
+   "method": "empirical",
+   "distinct": [
+    "xɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "zhoufagao_mc",
+   "selected": "xɑu",
+   "method": "empirical",
+   "distinct": [
+    "xɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "lifanggui_mc",
+   "selected": "xâu",
+   "method": "empirical",
+   "distinct": [
+    "xâu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "chenxinxiong_mc",
+   "selected": "xɑu",
+   "method": "empirical",
+   "distinct": [
+    "xɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "好",
+   "system": "karlgren_mc",
+   "selected": "xɑu",
+   "method": "empirical",
+   "distinct": [
+    "xɑu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "wangli_mc",
+   "selected": "pǐwɐt",
+   "method": "single",
+   "distinct": [
+    "pǐwɐt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "dongtonghe_mc",
+   "selected": "pjuɐt",
+   "method": "single",
+   "distinct": [
+    "pjuɐt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "zhoufagao_mc",
+   "selected": "piɑt",
+   "method": "single",
+   "distinct": [
+    "piɑt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "lifanggui_mc",
+   "selected": "pjwɐt",
+   "method": "single",
+   "distinct": [
+    "pjwɐt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "chenxinxiong_mc",
+   "selected": "pfǐuɐt",
+   "method": "single",
+   "distinct": [
+    "pfǐuɐt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "發",
+   "system": "karlgren_mc",
+   "selected": "pi̯wɐt",
+   "method": "single",
+   "distinct": [
+    "pi̯wɐt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "wangli_mc",
+   "selected": "kʰuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "kʰuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "dongtonghe_mc",
+   "selected": "kʰuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "kʰuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "zhoufagao_mc",
+   "selected": "kʰuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "kʰuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "lifanggui_mc",
+   "selected": "khung",
+   "method": "fallback_first",
+   "distinct": [
+    "khung"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "chenxinxiong_mc",
+   "selected": "kʰoŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "kʰoŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "空",
+   "system": "karlgren_mc",
+   "selected": "kʰuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "kʰuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "wangli_mc",
+   "selected": "kʰǐwok",
+   "method": "single",
+   "distinct": [
+    "kʰǐwok"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "dongtonghe_mc",
+   "selected": "kʰjuok",
+   "method": "single",
+   "distinct": [
+    "kʰjuok"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "zhoufagao_mc",
+   "selected": "kʰiuok",
+   "method": "single",
+   "distinct": [
+    "kʰiuok"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "lifanggui_mc",
+   "selected": "khjwok",
+   "method": "single",
+   "distinct": [
+    "khjwok"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "chenxinxiong_mc",
+   "selected": "kʰǐuk",
+   "method": "single",
+   "distinct": [
+    "kʰǐuk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "曲",
+   "system": "karlgren_mc",
+   "selected": "kʰi̯wok",
+   "method": "single",
+   "distinct": [
+    "kʰi̯wok"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "wangli_mc",
+   "selected": "hiwet",
+   "method": "single",
+   "distinct": [
+    "hiwet"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "dongtonghe_mc",
+   "selected": "xiuɛt",
+   "method": "single",
+   "distinct": [
+    "xiuɛt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "zhoufagao_mc",
+   "selected": "xiuɛt",
+   "method": "single",
+   "distinct": [
+    "xiuɛt"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "lifanggui_mc",
+   "selected": "xiwet",
+   "method": "single",
+   "distinct": [
+    "xiwet"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "chenxinxiong_mc",
+   "selected": "xiuet",
+   "method": "single",
+   "distinct": [
+    "xiuet"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "血",
+   "system": "karlgren_mc",
+   "selected": "xiwet",
+   "method": "single",
+   "distinct": [
+    "xiwet"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "稱",
+   "system": "wangli_mc",
+   "selected": "tɕʰǐəŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕʰǐəŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "稱",
+   "system": "dongtonghe_mc",
+   "selected": "tɕʰjəŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕʰjəŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "稱",
+   "system": "zhoufagao_mc",
+   "selected": "tɕʰiɪŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕʰieŋ",
+    "tɕʰiɪŋ"
+   ],
+   "status": "more_candidates"
+  },
+  {
+   "char": "稱",
+   "system": "lifanggui_mc",
+   "selected": "tśhjəng",
+   "method": "fallback_first",
+   "distinct": [
+    "tśhjəng"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "稱",
+   "system": "chenxinxiong_mc",
+   "selected": "tɕʰǐəŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕʰǐəŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "稱",
+   "system": "karlgren_mc",
+   "selected": "tɕʰi̯əŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕʰi̯əŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "wangli_mc",
+   "selected": "sǐaŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "sǐaŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "dongtonghe_mc",
+   "selected": "sjɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "sjɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "zhoufagao_mc",
+   "selected": "siɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "siɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "lifanggui_mc",
+   "selected": "sjang",
+   "method": "fallback_first",
+   "distinct": [
+    "sjang"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "chenxinxiong_mc",
+   "selected": "sǐɑŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "sǐɑŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "相",
+   "system": "karlgren_mc",
+   "selected": "si̯aŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "si̯aŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "wangli_mc",
+   "selected": "lɑk",
+   "method": "single",
+   "distinct": [
+    "lɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "dongtonghe_mc",
+   "selected": "lɑk",
+   "method": "single",
+   "distinct": [
+    "lɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "zhoufagao_mc",
+   "selected": "lɑk",
+   "method": "single",
+   "distinct": [
+    "lɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "lifanggui_mc",
+   "selected": "lâk",
+   "method": "single",
+   "distinct": [
+    "lâk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "chenxinxiong_mc",
+   "selected": "lɑk",
+   "method": "single",
+   "distinct": [
+    "lɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "落",
+   "system": "karlgren_mc",
+   "selected": "lɑk",
+   "method": "single",
+   "distinct": [
+    "lɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "wangli_mc",
+   "selected": "tɕǐwoŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕǐwoŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "dongtonghe_mc",
+   "selected": "tɕjuoŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕjuoŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "zhoufagao_mc",
+   "selected": "tɕiuoŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕiuoŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "lifanggui_mc",
+   "selected": "tśjwong",
+   "method": "fallback_first",
+   "distinct": [
+    "tśjwong"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "chenxinxiong_mc",
+   "selected": "tɕǐuŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕǐuŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "種",
+   "system": "karlgren_mc",
+   "selected": "tɕi̯woŋ",
+   "method": "fallback_first",
+   "distinct": [
+    "tɕi̯woŋ"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "wangli_mc",
+   "selected": "tu",
+   "method": "single",
+   "distinct": [
+    "tu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "dongtonghe_mc",
+   "selected": "tuo",
+   "method": "single",
+   "distinct": [
+    "tuo"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "zhoufagao_mc",
+   "selected": "tuo",
+   "method": "single",
+   "distinct": [
+    "tuo"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "lifanggui_mc",
+   "selected": "tuo",
+   "method": "single",
+   "distinct": [
+    "tuo"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "chenxinxiong_mc",
+   "selected": "tu",
+   "method": "single",
+   "distinct": [
+    "tu"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "都",
+   "system": "karlgren_mc",
+   "selected": "tuo",
+   "method": "single",
+   "distinct": [
+    "tuo"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "wangli_mc",
+   "selected": "dɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "dɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "dongtonghe_mc",
+   "selected": "dʰɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "dʰɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "zhoufagao_mc",
+   "selected": "dɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "dɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "lifanggui_mc",
+   "selected": "dân",
+   "method": "fallback_first",
+   "distinct": [
+    "dân"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "chenxinxiong_mc",
+   "selected": "dʰɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "dʰɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "彈",
+   "system": "karlgren_mc",
+   "selected": "dʰɑn",
+   "method": "fallback_first",
+   "distinct": [
+    "dʰɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "wangli_mc",
+   "selected": "bǐɛn",
+   "method": "fallback_first",
+   "distinct": [
+    "bǐɛn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "dongtonghe_mc",
+   "selected": "bʰjæn",
+   "method": "fallback_first",
+   "distinct": [
+    "bʰjæn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "zhoufagao_mc",
+   "selected": "biæn",
+   "method": "fallback_first",
+   "distinct": [
+    "biæn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "lifanggui_mc",
+   "selected": "bjiän",
+   "method": "fallback_first",
+   "distinct": [
+    "bjiän"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "chenxinxiong_mc",
+   "selected": "bʰǐɛn",
+   "method": "fallback_first",
+   "distinct": [
+    "bʰǐɛn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "便",
+   "system": "karlgren_mc",
+   "selected": "bʰi̯ɛn",
+   "method": "fallback_first",
+   "distinct": [
+    "bʰi̯ɛn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "wangli_mc",
+   "selected": "kɑn",
+   "method": "single",
+   "distinct": [
+    "kɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "dongtonghe_mc",
+   "selected": "kɑn",
+   "method": "single",
+   "distinct": [
+    "kɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "zhoufagao_mc",
+   "selected": "kɑn",
+   "method": "single",
+   "distinct": [
+    "kɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "lifanggui_mc",
+   "selected": "kân",
+   "method": "single",
+   "distinct": [
+    "kân"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "chenxinxiong_mc",
+   "selected": "kɑn",
+   "method": "single",
+   "distinct": [
+    "kɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "幹",
+   "system": "karlgren_mc",
+   "selected": "kɑn",
+   "method": "single",
+   "distinct": [
+    "kɑn"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "wangli_mc",
+   "selected": "bɑk",
+   "method": "single",
+   "distinct": [
+    "bɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "dongtonghe_mc",
+   "selected": "bʰɑk",
+   "method": "single",
+   "distinct": [
+    "bʰɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "zhoufagao_mc",
+   "selected": "bɑk",
+   "method": "single",
+   "distinct": [
+    "bɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "lifanggui_mc",
+   "selected": "bâk",
+   "method": "single",
+   "distinct": [
+    "bâk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "chenxinxiong_mc",
+   "selected": "bʰɑk",
+   "method": "single",
+   "distinct": [
+    "bʰɑk"
+   ],
+   "status": "pass"
+  },
+  {
+   "char": "泊",
+   "system": "karlgren_mc",
+   "selected": "bʰɑk",
+   "method": "single",
+   "distinct": [
+    "bʰɑk"
+   ],
+   "status": "pass"
+  }
+ ]
+}

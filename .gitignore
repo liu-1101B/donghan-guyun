@@ -18,6 +18,10 @@ audio_out/
 nv-bluetooth-service.conf.bak
 .reload_state.json
 .server.log
+.app_server.log
+.robot_server.log
+.robot_server_copy.log
+.robot_log_view.txt
 .robot_preferences.json
 .robot_preferences.json.tmp
 
@@ -28,3 +32,6 @@ jieba.cache
 
 # 逐音素报告的完整候选表（~5MB，scripts/phoneme_verification_report.py 可再生）
 docs/reports/phoneme_verification/polyphone_candidates.csv
+
+# 发音质量 QA 的音频产物（wav + manifest，scripts/qa_pronunciation_audit.py 可再生）
+qa_audio/

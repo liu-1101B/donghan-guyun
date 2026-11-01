@@ -1,0 +1,805 @@
+{
+ "version": 1,
+ "note": "\u4eba\u5de5\u5ba1\u6838\u591a\u97f3\u5b57\u6d4b\u8bd5\u96c6 v1\uff08\u6a21\u578b\u6309\u4e2d\u53e4\u97f3\u7406\u9884\u586b\uff0c\u5f85\u4eba\u8033/\u5e08\u627f\u7ec8\u5ba1\uff09\u3002acceptable=null \u7684\u4f53\u7cfb\u8868\u793a\u8be5\u4f53\u7cfb\u8868\u4e2d\u65e0\u6b64\u8bfb\u6cd5\uff0c\u4e0d\u5224\u5206\u3002flag=KNOWN_LIMITATION \u8868\u793a\u673a\u5236\u5df2\u77e5\u591f\u4e0d\u5230\u7684\u7f3a\u53e3\uff08\u73b0\u4ee3\u8c03\u7c7b\u6f02\u79fb\u5bfc\u81f4\u4e2d\u53e4\u8c03\u7c7b\u4e0d\u53ef\u8fbe\uff09\uff0c\u7528\u4e8e\u91cf\u5316\u800c\u975e\u8981\u6c42\u901a\u8fc7\u3002",
+ "systems": [
+  "wangli_mc",
+  "dongtonghe_mc",
+  "zhoufagao_mc",
+  "lifanggui_mc",
+  "chenxinxiong_mc",
+  "karlgren_mc"
+ ],
+ "entries": [
+  {
+   "id": "xing-ping",
+   "char": "\u884c",
+   "context": "\u4e09\u4eba\u884c\uff0c\u5fc5\u6709\u6211\u5e2b\u7109",
+   "meaning": "\u884c\u8d70\u3001\u884c\u4e3a\uff08x\u00edng\uff0c\u4e2d\u53e4\u5e73\u58f0\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0263\u0251\u014b"
+     ],
+     "dongtonghe_mc": [
+      "\u0263\u0251\u014b"
+     ],
+     "zhoufagao_mc": [
+      "\u0263\u0251n",
+      "\u0263\u0251\u014b"
+     ],
+     "lifanggui_mc": [
+      "\u0263\u00e2ng"
+     ],
+     "chenxinxiong_mc": [
+      "\u0263\u0251\u014b"
+     ],
+     "karlgren_mc": [
+      "\u0263\u0251\u014b"
+     ]
+    },
+    "rationale": "\u884c\u8d70\u4e49\u4e2d\u53e4\u5e73\u58f0\uff08\u5510\u97f5\uff09\uff1b\u73b0\u4ee3\u4e8c\u58f0\u2192\u5e73\uff1b\u5019\u9009\u4e2d\u5e73\u58f0\u884c\uff08\u89c1\u6bcd/\u5323\u6bcd \u0251\u014b/\u0251n \u97f5\uff09\u4e0e\u53bb\u58f0\u884c\uff08\u656c\u97f5\uff09\u5e76\u5b58\uff0c\u5e94\u53d6\u5e73\u58f0\u8bfb\u3002"
+   }
+  },
+  {
+   "id": "xing-qu",
+   "char": "\u884c",
+   "context": "\u884c\u4f0d",
+   "meaning": "\u884c\u5217\uff08h\u00e1ng\uff0c\u4e2d\u53e4\u53bb\u58f0\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0263\u0250\u014b"
+     ],
+     "dongtonghe_mc": [
+      "\u0263\u0250\u014b"
+     ],
+     "zhoufagao_mc": [
+      "\u0263a\u014b"
+     ],
+     "lifanggui_mc": [
+      "\u0263\u0250ng"
+     ],
+     "chenxinxiong_mc": [
+      "\u0263a\u014b"
+     ],
+     "karlgren_mc": [
+      "\u0263\u0250\u014b"
+     ]
+    },
+    "rationale": "\u884c\u5217\u4e49\u4e2d\u53e4\u53bb\u58f0\uff08\u656c\u97f5\uff09\uff1b\u4f46\u73b0\u4ee3 h\u00e1ng \u4e3a\u4e8c\u58f0\u2192\u5e73\uff0c\u673a\u5236\u6309\u5e73\u58f0\u5b9a\u4f4d\u4f1a\u9009\u5e73\u58f0\u8bfb\u2014\u2014\u8bb0\u5f55\u2018\u53bb\u58f0\u8bfb\u5728\u73b0\u4ee3\u975e\u53bb\u8c03\u2019\u7684\u53ef\u8fbe\u6027\u7f3a\u53e3\u3002"
+   }
+  },
+  {
+   "id": "chong-qu",
+   "char": "\u91cd",
+   "context": "\u614e\u91cd\u5927\u4e8b",
+   "meaning": "\u91cd\u8981\uff08zh\u00f2ng\uff0c\u4e2d\u53e4\u53bb\u58f0\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0221\u01d0wo\u014b"
+     ],
+     "dongtonghe_mc": [
+      "\u0221\u02b0juo\u014b"
+     ],
+     "zhoufagao_mc": [
+      "\u0256iuo\u014b"
+     ],
+     "lifanggui_mc": [
+      "\u1e0djwong"
+     ],
+     "chenxinxiong_mc": [
+      "\u0221\u02b0\u01d0u\u014b"
+     ],
+     "karlgren_mc": [
+      "\u0221\u02b0i\u032fwo\u014b"
+     ]
+    },
+    "rationale": "\u8be5\u8868\u4e2d\u2018\u91cd\u2019\u5404\u4f53\u7cfb\u5747\u53ea\u6709\u4e00\u4e2a\u4e0d\u540c\u8bfb\u6570\uff08\u591a\u884c\u540c\u97f3\u91cd\u590d\uff09\uff0c\u65e0\u6b67\u4e49\uff0c\u9009\u62e9\u5b89\u5168\uff1b\u4e0a\u58f0 ch\u00f3ng \u8bfb\u4e0d\u5728\u6b64\u8868\u3002"
+   }
+  },
+  {
+   "id": "le-ru",
+   "char": "\u6a02",
+   "context": "\u4e0d\u4ea6\u6a02\u4e4e",
+   "meaning": "\u5feb\u4e50\uff08l\u00e8\uff0c\u4e2d\u53e4\u5165\u58f0\u836f\u97f5\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "\u014b\u0254k",
+      "l\u0251k"
+     ],
+     "dongtonghe_mc": [
+      "\u014b\u0254k",
+      "l\u0251k"
+     ],
+     "zhoufagao_mc": [
+      "\u014bok",
+      "l\u0251k"
+     ],
+     "lifanggui_mc": [
+      "ng\u00e5k",
+      "l\u00e2k"
+     ],
+     "chenxinxiong_mc": [
+      "\u014b\u0254k",
+      "l\u0251k"
+     ],
+     "karlgren_mc": [
+      "\u014b\u0254k",
+      "l\u0251k"
+     ]
+    },
+    "rationale": "\u5feb\u4e50\u4e49\u5165\u58f0\uff08\u836f\u97f5\uff09\uff1b\u53bb\u58f0\u2018\u559c\u597d\u2019\uff08\u014bau\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u56db\u58f0\u2192\u53bb/\u5165\uff0c\u5165\u58f0\u884c\u5728\u5019\u9009\u5185\u3002"
+   }
+  },
+  {
+   "id": "le-qu",
+   "char": "\u6a02",
+   "context": "\u4ec1\u8005\u6a02\u5c71\uff0c\u77e5\u8005\u6a02\u6c34",
+   "meaning": "\u559c\u597d\uff08y\u00e0o\uff0c\u4e2d\u53e4\u53bb\u58f0\u6548\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u014bau"
+     ],
+     "dongtonghe_mc": [
+      "\u014bau"
+     ],
+     "zhoufagao_mc": [
+      "\u014bau"
+     ],
+     "lifanggui_mc": [
+      "ngau"
+     ],
+     "chenxinxiong_mc": [
+      "\u014b\u0254u"
+     ],
+     "karlgren_mc": [
+      "\u014bau"
+     ]
+    },
+    "rationale": "\u559c\u597d\u4e49\u53bb\u58f0\uff08\u6548\u97f5\uff09\uff1b\u5165\u58f0\u2018\u4e50\u2019\u8bfb\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002"
+   }
+  },
+  {
+   "id": "chang-ping",
+   "char": "\u9577",
+   "context": "\u9577\u77ed",
+   "meaning": "\u957f\u77ed\uff08ch\u00e1ng\uff0c\u4e2d\u53e4\u5e73\u58f0\u5b95\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0236\u01d0a\u014b"
+     ],
+     "dongtonghe_mc": [
+      "\u0236j\u0251\u014b"
+     ],
+     "zhoufagao_mc": [
+      "\u0288i\u0251\u014b"
+     ],
+     "lifanggui_mc": [
+      "\u1e6djang"
+     ],
+     "chenxinxiong_mc": [
+      "\u0236\u01d0\u0251\u014b"
+     ],
+     "karlgren_mc": [
+      "\u0236i\u032fa\u014b"
+     ]
+    },
+    "rationale": "\u957f\u77ed\u4e49\u5b9a\u6bcd\u5e73\u58f0\uff1b\u4e0a\u58f0\uff08\u6f84\u6bcd\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u4e8c\u58f0\u2192\u5e73\u3002"
+   }
+  },
+  {
+   "id": "chang-shang",
+   "char": "\u9577",
+   "context": "\u5e74\u9577",
+   "meaning": "\u5e74\u957f\u3001\u6392\u884c\uff08zh\u01ceng\uff0c\u4e2d\u53e4\u4e0a\u58f0\uff09",
+   "expected": {
+    "tone_class": "\u4e0a",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0221\u01d0a\u014b"
+     ],
+     "dongtonghe_mc": [
+      "\u0221\u02b0j\u0251\u014b"
+     ],
+     "zhoufagao_mc": [
+      "\u0256i\u0251\u014b"
+     ],
+     "lifanggui_mc": [
+      "\u1e0djang"
+     ],
+     "chenxinxiong_mc": [
+      "\u0221\u02b0\u01d0\u0251\u014b"
+     ],
+     "karlgren_mc": [
+      "\u0221\u02b0i\u032fa\u014b"
+     ]
+    },
+    "rationale": "\u5e74\u957f/\u6392\u884c\u4e49\u6f84\u6bcd\u4e0a\u58f0\uff08\u8bb2\u97f5\uff09\uff1b\u5e73\u58f0\u8bfb\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u4e09\u58f0\u2192\u4e0a/\u5165\u3002"
+   }
+  },
+  {
+   "id": "de-ru",
+   "char": "\u5f97",
+   "context": "\u5f97\u5931\u4e4b\u9593",
+   "meaning": "\u5f97\u5230\uff08d\u00e9\uff0c\u4e2d\u53e4\u5165\u58f0\u5fb7\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "t\u0259k"
+     ],
+     "dongtonghe_mc": [
+      "t\u0259k"
+     ],
+     "zhoufagao_mc": [
+      "t\u0259k"
+     ],
+     "lifanggui_mc": [
+      "t\u0259k"
+     ],
+     "chenxinxiong_mc": [
+      "t\u0259k"
+     ],
+     "karlgren_mc": [
+      "t\u0259k"
+     ]
+    },
+    "rationale": "\u8be5\u8868\u4e2d\u2018\u5f97\u2019\u5404\u4f53\u7cfb\u4ec5\u4e00\u6761\u975e suspect \u884c\uff08\u5165\u58f0 t\u0259k\uff09\uff0cmethod=single\uff0c\u9009\u62e9\u5b89\u5168\uff1bde2 \u7684\u73b0\u4ee3\u8c03\u7c7b\u6f02\u79fb\u4e0d\u5f71\u54cd\uff08\u552f\u4e00\u5019\u9009\uff09\u3002"
+   }
+  },
+  {
+   "id": "shuo-qu",
+   "char": "\u8aaa",
+   "context": "\u6e38\u8aaa\u4e4b\u58eb",
+   "meaning": "\u529d\u8bf4\uff08shu\u00ec\uff0c\u4e2d\u53e4\u53bb\u58f0\u859b\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0255\u01d0w\u025bi"
+     ],
+     "dongtonghe_mc": [
+      "\u0255ju\u00e6i"
+     ],
+     "zhoufagao_mc": [
+      "\u0255iu\u00e6i"
+     ],
+     "lifanggui_mc": [
+      "\u015bjw\u00e4i"
+     ],
+     "chenxinxiong_mc": [
+      "\u0255\u01d0u\u025bi"
+     ],
+     "karlgren_mc": [
+      "\u0255i\u032fw\u025bi"
+     ]
+    },
+    "rationale": "\u529d\u8bf4\u4e49\u53bb\u58f0\uff08\u859b\u97f5\uff09\uff1b\u5165\u58f0\u2018\u8bf4\u2019\uff08\u8a00\u8bf4\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u56db\u58f0\u2192\u53bb/\u5165\u3002"
+   }
+  },
+  {
+   "id": "shuo-ru",
+   "char": "\u8aaa",
+   "context": "\u5b50\u66f0\uff0c\u8a69\u96f2",
+   "meaning": "\u8a00\u8bf4\uff08shu\u014d\uff0c\u4e2d\u53e4\u5165\u58f0\u859b\u97f5\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "j\u01d0w\u025bt",
+      "\u0255\u01d0w\u025bt"
+     ],
+     "dongtonghe_mc": [
+      "ju\u00e6t",
+      "\u0255ju\u00e6t"
+     ],
+     "zhoufagao_mc": [
+      "iu\u00e6t",
+      "\u0255iu\u00e6t"
+     ],
+     "lifanggui_mc": [
+      "jiw\u00e4t",
+      "\u015bjw\u00e4t"
+     ],
+     "chenxinxiong_mc": [
+      "\u01d0u\u025bt",
+      "\u0255\u01d0u\u025bt"
+     ],
+     "karlgren_mc": [
+      "\u0255i\u032fw\u025bt"
+     ]
+    },
+    "rationale": "\u8a00\u8bf4\u4e49\u4e2d\u53e4\u5165\u58f0\uff08\u859b\u97f5\uff09\uff1b\u4f46\u73b0\u4ee3 shu\u014d \u4e3a\u4e00\u58f0\u2192\u5e73\uff0c\u800c\u2018\u8aaa\u2019\u4e2d\u53e4\u65e0\u5e73\u58f0\u4f4d\uff08\u53bb/\u5165\uff09\u2014\u2014\u673a\u5236\u5b9a\u4f4d\u4e0d\u5230\uff0c\u9884\u671f\u56de\u9000\u3002\u8bb0\u5f55\u5165\u58f0\u5b57\u8c03\u7c7b\u6f02\u79fb\u7f3a\u53e3\u3002"
+   }
+  },
+  {
+   "id": "hua-ping",
+   "char": "\u83ef",
+   "context": "\u707c\u707c\u5176\u83ef",
+   "meaning": "\u82b1\u3001\u534e\u7f8e\uff08hu\u00e1\uff0c\u4e2d\u53e4\u5e73\u58f0\u9ebb\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0263wa"
+     ],
+     "dongtonghe_mc": [
+      "\u0263ua"
+     ],
+     "zhoufagao_mc": [
+      "\u0263ua"
+     ],
+     "lifanggui_mc": [
+      "\u0263wa"
+     ],
+     "chenxinxiong_mc": [
+      "\u0263ua"
+     ],
+     "karlgren_mc": [
+      "\u0263wa"
+     ]
+    },
+    "rationale": "\u82b1\u4e49\u5e73\u58f0\uff08\u9ebb\u97f5\uff09\uff1b\u53bb\u58f0\u53d8\u4f53\uff08hwa/xua\uff0c\u82b1\u5b57\u5f02\u8bfb\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002"
+   }
+  },
+  {
+   "id": "jue-ru",
+   "char": "\u89ba",
+   "context": "\u89ba\u609f",
+   "meaning": "\u89c9\u609f\uff08ju\u00e9\uff0c\u4e2d\u53e4\u5165\u58f0\u89c9\u97f5\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "k\u0254k"
+     ],
+     "dongtonghe_mc": [
+      "k\u0254k"
+     ],
+     "zhoufagao_mc": [
+      "kok"
+     ],
+     "lifanggui_mc": [
+      "k\u00e5k"
+     ],
+     "chenxinxiong_mc": [
+      "k\u0254k"
+     ],
+     "karlgren_mc": [
+      "k\u0254k"
+     ]
+    },
+    "rationale": "\u89c9\u609f\u4e49\u5165\u58f0\uff08\u89c9\u97f5\uff09\uff1b\u73b0\u4ee3 ju\u00e9 \u4e8c\u58f0\u2192\u5e73\uff0c\u800c\u2018\u89ba\u2019\u4e2d\u53e4\u65e0\u5e73\u58f0\u4f4d\uff08\u53bb/\u5165\uff09\u2014\u2014\u9884\u671f\u56de\u9000\u3002\u8bb0\u5f55\u5165\u58f0\u5b57\u8c03\u7c7b\u6f02\u79fb\u7f3a\u53e3\u3002"
+   }
+  },
+  {
+   "id": "jue-qu",
+   "char": "\u89ba",
+   "context": "\u5922\u89ba",
+   "meaning": "\u7761\u9192\uff08ju\u00e9\uff0c\u4e2d\u53e4\u53bb\u58f0\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "kau"
+     ],
+     "dongtonghe_mc": [
+      "kau"
+     ],
+     "zhoufagao_mc": [
+      "kau"
+     ],
+     "lifanggui_mc": [
+      "kau"
+     ],
+     "chenxinxiong_mc": [
+      "k\u0254u"
+     ],
+     "karlgren_mc": [
+      "kau"
+     ]
+    },
+    "rationale": "\u7761\u9192\u4e49\u53bb\u58f0\uff1b\u4e0e\u5165\u58f0\u2018\u89c9\u609f\u2019\u73b0\u4ee3\u540c\u97f3 ju\u00e9\uff0c\u673a\u5236\u65e0\u6cd5\u4ece\u73b0\u4ee3\u8c03\u7c7b\u533a\u5206\u4e24\u8005\u2014\u2014\u8bb0\u5f55\u540c\u97f3\u5f02\u8c03\u7c7b\u7f3a\u53e3\u3002"
+   }
+  },
+  {
+   "id": "zai-shang",
+   "char": "\u8f09",
+   "context": "\u842c\u4e8b\u52dd\u8f09",
+   "meaning": "\u8bb0\u8f7d\uff08z\u01cei\uff0c\u4e2d\u53e4\u4e0a\u58f0\u8d3f\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u4e0a",
+    "acceptable": {
+     "wangli_mc": [
+      "ts\u0252i"
+     ],
+     "dongtonghe_mc": [
+      "tsAi"
+     ],
+     "zhoufagao_mc": [
+      "ts\u0259i"
+     ],
+     "lifanggui_mc": [
+      "ts\u1eadi"
+     ],
+     "chenxinxiong_mc": [
+      "ts\u0259i"
+     ],
+     "karlgren_mc": [
+      "ts\u0251\u0306i"
+     ]
+    },
+    "rationale": "\u8bb0\u8f7d\u4e49\u4e0a\u58f0\uff08\u8d3f\u97f5\uff09\uff1b\u53bb\u58f0\u2018\u88c5\u8f7d\u2019\uff08\u6cf0\u97f5\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u4e09\u58f0\u2192\u4e0a/\u5165\u3002"
+   }
+  },
+  {
+   "id": "zai-qu",
+   "char": "\u8f09",
+   "context": "\u8f09\u6b4c\u8f09\u821e",
+   "meaning": "\u88c5\u8f7d\u3001\u627f\u8f7d\uff08z\u00e0i\uff0c\u4e2d\u53e4\u53bb\u58f0\u6cf0\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "dz\u0252i"
+     ],
+     "dongtonghe_mc": [
+      "dz\u02b0Ai"
+     ],
+     "zhoufagao_mc": [
+      "dz\u0259i"
+     ],
+     "lifanggui_mc": [
+      "dz\u1eadi"
+     ],
+     "chenxinxiong_mc": [
+      "dz\u02b0\u0259i"
+     ],
+     "karlgren_mc": [
+      "dz\u02b0\u0251\u0306i"
+     ]
+    },
+    "rationale": "\u627f\u8f7d\u4e49\u53bb\u58f0\uff08\u6cf0\u97f5\uff09\uff1b\u4e0a\u58f0\u2018\u8bb0\u8f7d\u2019\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u56db\u58f0\u2192\u53bb/\u5165\u3002"
+   }
+  },
+  {
+   "id": "hui-qu",
+   "char": "\u6703",
+   "context": "\u6703\u5408",
+   "meaning": "\u4f1a\u5408\uff08hu\u00ec\uff0c\u4e2d\u53e4\u53bb\u58f0\u961f\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0263u\u0251i"
+     ],
+     "dongtonghe_mc": [
+      "\u0263u\u0251i"
+     ],
+     "zhoufagao_mc": [
+      "\u0263u\u0251i"
+     ],
+     "lifanggui_mc": [
+      "\u0263w\u00e2i"
+     ],
+     "chenxinxiong_mc": [
+      "\u0263uai"
+     ],
+     "karlgren_mc": [
+      "\u0263w\u0251i"
+     ]
+    },
+    "rationale": "\u4f1a\u5408\u4e49\u5323\u6bcd\u53bb\u58f0\uff08\u961f\u97f5\uff09\uff1b\u6eaa\u6bcd ku\u0251i \u4e3a\u7f55\u7528\u8bfb\uff0c\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002"
+   }
+  },
+  {
+   "id": "chuan-qu",
+   "char": "\u50b3",
+   "context": "\u81ea\u50b3",
+   "meaning": "\u4f20\u8bb0\uff08zhu\u00e0n\uff0c\u4e2d\u53e4\u53bb\u58f0\u613f\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0221\u01d0w\u025bn"
+     ],
+     "dongtonghe_mc": [
+      "\u0221\u02b0ju\u00e6n"
+     ],
+     "zhoufagao_mc": [
+      "\u0256iu\u00e6n"
+     ],
+     "lifanggui_mc": [
+      "\u1e0djw\u00e4n"
+     ],
+     "chenxinxiong_mc": [
+      "\u0221\u02b0\u01d0u\u025bn"
+     ],
+     "karlgren_mc": [
+      "\u0221\u02b0i\u032fw\u025bn"
+     ]
+    },
+    "rationale": "\u4f20\u8bb0\u4e49\u6f84\u6bcd\u53bb\u58f0\uff08\u613f\u97f5\uff09\uff1b\u5b9a\u6bcd\u5e73\u58f0\u2018\u4f20\u9012\u2019\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u9ad8\u672c\u6f22\u8868\u65e0\u6b64\u5b57\u6e05/\u6d4a\u533a\u522b\uff08\u5355\u4e00\u8bfb\u6570\uff09\uff0c\u671f\u671b\u653e\u5bbd\u3002"
+   }
+  },
+  {
+   "id": "chuan-ping",
+   "char": "\u50b3",
+   "context": "\u50b3\u7fd2\u9304",
+   "meaning": "\u4f20\u9012\uff08chu\u00e1n\uff0c\u4e2d\u53e4\u5e73\u58f0\u4ed9\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0236\u01d0w\u025bn"
+     ],
+     "dongtonghe_mc": [
+      "\u0236jw\u025bn"
+     ],
+     "zhoufagao_mc": [
+      "\u0288iw\u025bn"
+     ],
+     "lifanggui_mc": [
+      "\u1e6djw\u025bn"
+     ],
+     "chenxinxiong_mc": [
+      "\u0236\u01d0u\u025bn"
+     ],
+     "karlgren_mc": [
+      "d\u0291i\u032fu\u025bn"
+     ]
+    },
+    "rationale": "\u4f20\u9012\u4e49\u5b9a\u6bcd\u5e73\u58f0\uff08\u4ed9\u97f5\uff09\uff1b\u53bb\u58f0\u2018\u4f20\u8bb0\u2019\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002"
+   }
+  },
+  {
+   "id": "e-qu",
+   "char": "\u60e1",
+   "context": "\u597d\u9038\u60e1\u52de",
+   "meaning": "\u538c\u6076\uff08w\u00f9\uff0c\u4e2d\u53e4\u53bb\u58f0\u79a1\u97f5\uff0c\u96f6\u58f0\u6bcd\uff09",
+   "flag": "AMBIGUOUS",
+   "expected": {
+    "tone_class": "\u53bb",
+    "acceptable": {
+     "wangli_mc": [
+      "u"
+     ],
+     "dongtonghe_mc": [
+      "\u0294uo"
+     ],
+     "zhoufagao_mc": [
+      "\u0294uo"
+     ],
+     "lifanggui_mc": [
+      "uo"
+     ],
+     "chenxinxiong_mc": [
+      "\u0294u"
+     ],
+     "karlgren_mc": [
+      "\u0294uo"
+     ]
+    },
+    "rationale": "\u538c\u6076\u4e49\u53bb\u58f0\uff08\u79a1\u97f5\uff09\uff1b\u5165\u58f0\u2018\u90aa\u6076\u2019\uff08\u9521\u97f5 \u0251k\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u4f46\u73b0\u4ee3 w\u00f9/\u00e8 \u540c\u4e3a\u56db\u58f0\u2192\u53bb/\u5165\uff0c\u4e24\u8bfb\u4f4d\u7f6e\u540c\u5c5e\u5019\u9009\u7c7b\uff0c\u673a\u5236\u53ef\u80fd\u56de\u9000\u2014\u2014\u8bb0\u5f55\u6b67\u4e49\u3002"
+   }
+  },
+  {
+   "id": "e-ru",
+   "char": "\u60e1",
+   "context": "\u60e1\u4eba\u5148\u544a\u72c0",
+   "meaning": "\u90aa\u6076\uff08\u00e8\uff0c\u4e2d\u53e4\u5165\u58f0\u9521\u97f5\uff09",
+   "flag": "AMBIGUOUS",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0251k"
+     ],
+     "dongtonghe_mc": [
+      "\u0294\u0251k"
+     ],
+     "zhoufagao_mc": [
+      "\u0294\u0251k"
+     ],
+     "lifanggui_mc": [
+      "\u00e2k"
+     ],
+     "chenxinxiong_mc": [
+      "\u0294\u0251k"
+     ],
+     "karlgren_mc": [
+      "\u0294\u0251k"
+     ]
+    },
+    "rationale": "\u90aa\u6076\u4e49\u5165\u58f0\uff08\u9521\u97f5\uff09\uff1b\u4e0e\u53bb\u58f0\u2018\u538c\u6076\u2019\u73b0\u4ee3\u540c\u4e3a\u56db\u58f0\uff0c\u673a\u5236\u65e0\u6cd5\u533a\u5206\u2014\u2014\u8bb0\u5f55\u6b67\u4e49\u3002"
+   }
+  },
+  {
+   "id": "shu-ru",
+   "char": "\u6578",
+   "context": "\u6578\u898b\u4e0d\u5931\u4fe1",
+   "meaning": "\u5c61\u6b21\uff08shu\u00f2\uff0c\u4e2d\u53e4\u5165\u58f0\u5c4b\u97f5\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u5165",
+    "acceptable": {
+     "wangli_mc": [
+      "suk",
+      "\u0283\u0254k"
+     ],
+     "dongtonghe_mc": [
+      "suk",
+      "\u0283\u0254k"
+     ],
+     "zhoufagao_mc": [
+      "suk",
+      "\u0282ok"
+     ],
+     "lifanggui_mc": [
+      "suk",
+      "\u1e63\u00e5k"
+     ],
+     "chenxinxiong_mc": [
+      "sok",
+      "\u0283\u0254k"
+     ],
+     "karlgren_mc": [
+      "\u0282\u0254k"
+     ]
+    },
+    "rationale": "\u5c61\u6b21\u4e49\u5165\u58f0\uff08\u5c4b/\u89c9\u97f5\uff09\uff1b\u4e0a\u58f0\u2018\u6570\u76ee\u2019\uff08\u8bed\u97f5\uff09\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u73b0\u4ee3\u56db\u58f0\u2192\u53bb/\u5165\u3002"
+   }
+  },
+  {
+   "id": "shu-shang",
+   "char": "\u6578",
+   "context": "\u6578\u76ee",
+   "meaning": "\u6570\u76ee\uff08sh\u00f9\uff0c\u4e2d\u53e4\u4e0a\u58f0\u8bed\u97f5\uff09",
+   "flag": "KNOWN_LIMITATION",
+   "expected": {
+    "tone_class": "\u4e0a",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0283\u01d0u"
+     ],
+     "dongtonghe_mc": [
+      "\u0283juo"
+     ],
+     "zhoufagao_mc": [
+      "\u0282iuo"
+     ],
+     "lifanggui_mc": [
+      "\u1e63ju"
+     ],
+     "chenxinxiong_mc": [
+      "\u0283\u01d0u"
+     ],
+     "karlgren_mc": [
+      "\u0282i\u032fu"
+     ]
+    },
+    "rationale": "\u6570\u76ee\u4e49\u4e0a\u58f0\uff08\u8bed\u97f5\uff09\uff1b\u4f46\u73b0\u4ee3 sh\u00f9 \u56db\u58f0\u2192\u53bb/\u5165\uff0c\u800c\u2018\u6578\u2019\u4e2d\u53e4\u65e0\u53bb\u58f0\u4f4d\uff08\u4e0a/\u5165\uff09\u2014\u2014\u673a\u5236\u4f1a\u9009\u4e2d\u5165\u58f0\u884c\uff0c\u9884\u671f\u8bef\u9009\u3002\u8bb0\u5f55\u8c03\u7c7b\u6f02\u79fb\u7f3a\u53e3\u3002"
+   }
+  },
+  {
+   "id": "huan-ping",
+   "char": "\u9084",
+   "context": "\u9084\u9109",
+   "meaning": "\u8fd4\u56de\uff08hu\u00e1n\uff0c\u4e2d\u53e4\u5e73\u58f0\u6853\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0263wan"
+     ],
+     "dongtonghe_mc": [
+      "\u0263uan"
+     ],
+     "zhoufagao_mc": [
+      "\u0263uan"
+     ],
+     "lifanggui_mc": [
+      "\u0263wan"
+     ],
+     "chenxinxiong_mc": [
+      "\u0263uan"
+     ],
+     "karlgren_mc": [
+      "\u0263uan"
+     ]
+    },
+    "rationale": "\u8fd4\u56de\u4e49\u5323\u6bcd\u5e73\u58f0\uff08\u6853\u97f5\uff09\uff1b\u77e5\u6bcd z\u01d0w\u025bn \u884c\u4e3a\u5f02\u8bfb\uff0c\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002"
+   }
+  },
+  {
+   "id": "can-ping",
+   "char": "\u53c3",
+   "context": "\u53c3\u52a0",
+   "meaning": "\u53c2\u4e0e\uff08c\u0101n\uff0c\u4e2d\u53e4\u5e73\u58f0\u4fb5\u97f5\uff09",
+   "expected": {
+    "tone_class": "\u5e73",
+    "acceptable": {
+     "wangli_mc": [
+      "\u0283\u01d0\u011bm"
+     ],
+     "dongtonghe_mc": [
+      "\u0283jem"
+     ],
+     "zhoufagao_mc": [
+      "\u0282i\u026am"
+     ],
+     "lifanggui_mc": [
+      "\u1e63j\u0259m"
+     ],
+     "chenxinxiong_mc": [
+      "\u0283\u01d0\u0259m"
+     ],
+     "karlgren_mc": null
+    },
+    "rationale": "\u53c2\u4e0e\u4e49\u5e73\u58f0\uff08\u4fb5\u97f5\uff09\uff1b\u5165\u58f0\u2018\u53c2\u5dee\u2019\uff08c\u012b/t\u0283\u02b0 \u7cfb\uff09\u4e0e\u53bb\u58f0\u4e0d\u5e94\u88ab\u9009\u4e2d\u3002\u9ad8\u672c\u6f22\u8868\u65e0\u5e73\u58f0\u884c\uff08\u4ec5\u5165\u58f0\u4e24\u884c\uff09\u2014\u2014\u8be5\u4f53\u7cfb\u65e0\u671f\u671b\u3002"
+   }
+  },
+  {
+   "id": "cha-ping-observe",
+   "char": "\u5dee",
+   "context": "\u53c3\u5dee\u4e0d\u9f4a",
+   "meaning": "\u53c2\u5dee\uff08c\u012b\uff0c\u4e2d\u53e4\u5e73\u58f0\uff09",
+   "flag": "OBSERVE_ONLY",
+   "expected": null,
+   "rationale": "\u89c2\u5bdf\u9879\uff1a\u8be5\u8868 5 \u884c\u5f02\u8bfb\uff08\u5e73 t\u0283\u02b0ai/t\u0283\u02b0a\u3001\u53bb t\u0283\u02b0\u0250i \u7b49\uff09\uff0c\u4e2d\u53e4\u884c\u5e8f\u4e0e\u73b0\u4ee3\u5bf9\u5e94\u6df7\u4e71\uff0c\u6682\u4e0d\u8bbe\u5b9a\u671f\u671b\u8bfb\u6cd5\uff0c\u4ec5\u89c2\u5bdf\u5019\u9009\u96c6\u4e0e method\u3002"
+  },
+  {
+   "id": "shuai-shang-observe",
+   "char": "\u7387",
+   "context": "\u5faa\u7387",
+   "meaning": "\u9075\u5faa\u3001\u7387\u9886\uff08shu\u00e0i\uff0c\u4e2d\u53e4\u4e0a\u58f0\u672f\u97f5\uff09",
+   "flag": "OBSERVE_ONLY",
+   "expected": null,
+   "rationale": "\u89c2\u5bdf\u9879\uff1a\u4e0a\u58f0 \u0283wi \u7cfb\u4e0e\u5165\u58f0 \u0283\u01d0u\u011bt \u7cfb\u5e76\u5b58\uff0c\u73b0\u4ee3 shu\u00e0i/l\u01dc \u540c\u4e3a\u56db\u58f0\u2192\u53bb/\u5165\uff0c\u4e0a\u58f0\u4f4d\u4e0d\u53ef\u8fbe\u2014\u2014\u9884\u671f\u56de\u9000\u6216\u8bef\u9009\u5165\u58f0\u884c\uff0c\u4ec5\u89c2\u5bdf\u3002"
+  },
+  {
+   "id": "cheng-ping-observe",
+   "char": "\u4e58",
+   "context": "\u4e58\u821f",
+   "meaning": "\u4e58\u5750\uff08ch\u00e9ng\uff0c\u4e2d\u53e4\u5e73\u58f0\u84b8\u97f5\uff09",
+   "flag": "OBSERVE_ONLY",
+   "expected": null,
+   "rationale": "\u89c2\u5bdf\u9879\uff1a\u5468\u6cd5\u9ad8\u8868 2 \u4e2a\u4e0d\u540c\u8bfb\u6570\uff08\u0291i\u026a\u014b/\u0291ie\u014b\uff0c\u84b8/\u8bc1\uff09\uff0c\u5176\u4f59\u4f53\u7cfb\u5355\u4e00\u8bfb\u6570\uff1b\u73b0\u4ee3 ch\u00e9ng \u4e8c\u58f0\u2192\u5e73\uff0c\u89c2\u5bdf\u9009\u62e9\u5668\u5728 2 \u5019\u9009\u4e0b\u7684\u884c\u4e3a\u3002"
+  }
+ ],
+ "auto_safe_chars": [
+  "\u738b",
+  "\u4e2d",
+  "\u9053",
+  "\u96e3",
+  "\u597d",
+  "\u767c",
+  "\u7a7a",
+  "\u66f2",
+  "\u8840",
+  "\u7a31",
+  "\u76f8",
+  "\u843d",
+  "\u7a2e",
+  "\u90fd",
+  "\u5f48",
+  "\u4fbf",
+  "\u5e79",
+  "\u6cca"
+ ]
+}
