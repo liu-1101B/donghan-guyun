@@ -1349,6 +1349,22 @@ class EasternMcCorrespondenceTests(unittest.TestCase):
         self.assertEqual(checked, 3872)
 
 
+def _bundled_espeak_exe():
+    """本机可用的 eSpeak-ng 可执行文件绝对路径；不可用返回 None。
+
+    get_espeak_path() 仅在找到真实引擎（应用目录捆绑版 / MSI 安装版）时
+    返回绝对路径，否则回落到 PATH 裸名——CI runner（windows-latest /
+    ubuntu-latest）两者都没有（捆绑二进制不入库、镜像未预装 espeak-ng）。
+    本文件的采样数钉住在捆绑 1.52（Windows 构建）上实测，跨构建不保证
+    一致，故真机实测类测试只在可用环境运行，否则统一跳过；eSpeak 管线
+    逻辑由 fake subprocess 测试在任意环境覆盖。
+    """
+    import os
+    import sound_synth
+    exe = sound_synth.get_espeak_path()
+    return exe if os.path.isabs(exe) else None
+
+
 class SoundSynthEngineRobustnessTests(unittest.TestCase):
     """sound_synth 引擎健壮性：eSpeak 临时 wav 位置 / rc=0 空文件检测 / 共振峰元音表。"""
 
@@ -1451,6 +1467,8 @@ class SoundSynthEngineRobustnessTests(unittest.TestCase):
             self.assertNotIn(" ", v, repr((ch, v)))
         self.assertFalse(set(pc.ESPEAK_APPROX_MAP) & set(pc.ESPEAK_IPA_MAP))
 
+    @unittest.skipUnless(_bundled_espeak_exe(),
+                         "本机无捆绑 eSpeak-ng，跳过真机实测（管线由 fake subprocess 测试覆盖）")
     def test_espeak_approx_values_measured_speaking(self):
         """-x 音素转储回归：近似层每个值都产出真实音素（旧行为：27 个原始
         符号 → ? 即 [ʔ]、ɡ → 空；近似值必须是真音素且后随元音完好=无截断）。"""
@@ -1468,6 +1486,8 @@ class SoundSynthEngineRobustnessTests(unittest.TestCase):
             self.assertIn(v, phon, repr(v))
             self.assertIn("A55", phon, repr(v))
 
+    @unittest.skipUnless(_bundled_espeak_exe(),
+                         "本机无捆绑 eSpeak-ng，跳过真机实测（管线由 fake subprocess 测试覆盖）")
     def test_repaired_ipa_map_values_measured_speaking(self):
         """2026-11-03 回归：映射表全部现值（含修复的 7 个）都产出真实音素、
         无 ?、无整段丢失。（旧值 O/V/7/{ 产出空音素=0.43 s 静默、
@@ -1488,6 +1508,8 @@ class SoundSynthEngineRobustnessTests(unittest.TestCase):
                 self.assertNotIn("?", phon, repr(v))
             self.assertIn("A", phon, repr(v))
 
+    @unittest.skipUnless(_bundled_espeak_exe(),
+                         "本机无捆绑 eSpeak-ng，跳过真机实测（管线由 fake subprocess 测试覆盖）")
     def test_approximated_silent_words_measured_lengths(self):
         """生产词形实测钉住（eSpeak-ng 1.52 + 新映射/近似层）：
         ɣɑŋ 带真实起始音素（比无起始的 ɑŋ 长，旧值 ? 即 [ʔ] 不占时长）；
