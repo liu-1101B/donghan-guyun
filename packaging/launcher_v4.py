@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""launcher_v4.py — 古韵机器人 v4.0.0 的 PyInstaller 入口。
+"""launcher_v4.py — 古韵机器人 v4.1.0 的 PyInstaller 入口。
 
 和 v3 的 launcher.py 的差别：
 - 启动的是新版机器人界面 robot/app.py（不再是 guyun_app.py）；

@@ -204,19 +204,30 @@ def generate_turn(text: str, history=None, mode: str = None) -> dict:
         selected = "dictionary"
 
     out = None
+    fallback_reason = None
     if selected == "api":
         if not API_KEY:
             _safe_log("[llm] 当前选择大模型 API 模式，但未配置 LLM_API_KEY；改用本地词典")
+            fallback_reason = "未配置 LLM_API_KEY"
         else:
             try:
                 out = _call_chat(LLM_BASE, LLM_MODEL, text, history,
                                  key=API_KEY, timeout=60.0)
                 out["source"] = "cloud"
             except Exception as e:
+                fallback_reason = f"{e.__class__.__name__}: {e}"
                 _safe_log(f"[llm] 云端 API 调用失败，改用本地词典：{e.__class__.__name__}")
 
     if out is None:
         out = _local_fallback(text)
+        # 把回退原因带回界面：此前只写 print 日志（stdout 重定向到文件时
+        # 还是块缓冲，几乎看不见），界面只显示「来源 本地词典」，用户
+        # 无从分辨是选了词典还是大模型调用失败（11/04 实测：密钥 401
+        # 静默回退多日无人发现）。
+        if fallback_reason:
+            out["llm_note"] = (
+                f"本轮选择了大模型 API，但调用失败（{fallback_reason}），"
+                f"回答由本地词典兜底。请检查「模型与 API」中的密钥/地址。")
     # 繁体 → 简体（古韵库字表为简体）
     out["translation"] = _to_simplified(out.get("translation", ""))
     out["reply"] = _to_simplified(out["reply"])

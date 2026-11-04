@@ -342,7 +342,7 @@ def _gen_worker(job, session, cfg):
                 else:
                     done["reply_mod"] = (val or b"", None)
                 job["phase"] = f"synth_{key}"
-        (wav_u, _), (wav_r, result_r), (mp3_m, _) = (
+        (wav_u, result_u), (wav_r, result_r), (mp3_m, _) = (
             done["user"], done["reply_anc"], done["reply_mod"])
         if reply and not wav_r:
             source = f"{source}+ancient_fallback"
@@ -353,11 +353,21 @@ def _gen_worker(job, session, cfg):
             "reply": reply,
             "reply_modern": reply_modern,
             "source": source,
+            "llm_note": gen.get("llm_note", ""),
             "mode": cfg["mode"],
             "coverage": result_r.coverage_pct if result_r and wav_r else 0.0,
             "approx": result_r.approx if result_r and wav_r else 0,
             "audios": {
-                "user": {"data": wav_u, "kind": "wav", "text": user_text},
+                "user": {
+                    "data": wav_u, "kind": "wav", "text": user_text,
+                    # 我的话·古汉语 同样给 IPA：与 reply_anc 同口径
+                    # （所选体系逐字拟音，缺字不补拼音），11/04 起补上
+                    # （此前合成结果被丢弃，界面只有文字没有 IPA）。
+                    "ipa": result_u.ipa_text if result_u and wav_u else "",
+                    "coverage": result_u.coverage_pct
+                    if result_u and wav_u else 0.0,
+                    "unknown": list(result_u.unknown) if result_u else [],
+                },
                 "reply_anc": {"data": wav_r, "kind": "wav", "text": reply},
                 "reply_mod": {"data": mp3_m, "kind": "mp3",
                               "text": reply_modern},
@@ -467,17 +477,19 @@ if st.session_state.get("_changed_mods"):
 
 # ---------- 音韵分析（逐字，供表格展示） ----------
 def analyze_reply(classical: str):
+    from language.ancient_tts import (get_pinyin_fallback, estimate_ipa_from_pinyin,
+                                      lookup_char_invariant)
     rows = []
     for ch in classical:
         if not ch.strip() or ch in '。！？，、；：""''（）…—·':
             continue
-        data = lookup_char(ch)
+        matched, data = lookup_char_invariant(ch)
         if data:
             rows.append({"char": ch, "ipa": data["ipa"],
+                         "final": data.get("final", ""),
                          "tone": data.get("tone", ""),
                          "src": "收录"})
         else:
-            from language.ancient_tts import get_pinyin_fallback, estimate_ipa_from_pinyin
             py = get_pinyin_fallback(ch)
             ipa = estimate_ipa_from_pinyin(py) if py else None
             if ipa:
@@ -1046,6 +1058,10 @@ with col2:
         if res["mode"] == "ancient":
             meta += f' · 古韵覆盖 {res["coverage"]}%'
         st.markdown(f'<div class="gi-meta">{meta}</div>', unsafe_allow_html=True)
+        # 大模型模式静默回退词典时必须可见（此前只写 print 日志，
+        # stdout 重定向时块缓冲几乎不可见，用户误以为设置没生效）
+        if res.get("llm_note"):
+            st.warning(res["llm_note"])
 
         if res["translation"]:
             st.markdown(f'<div class="gi-muteline">我的话 · 古汉语：{res["translation"]}</div>',
@@ -1090,11 +1106,16 @@ with col2:
                         f'（无有效汉字？）</div></div>',
                         unsafe_allow_html=True)
                 continue
+            # 有 IPA 的卡（我的话·古汉语 / 回答·古韵）在文字下附拟音；
+            # 现代汉语卡无 IPA 字段，不受影响。
+            _card_ipa = item.get("ipa", "")
             st.markdown(
                 f'<div class="gi-audio-card">'
                 f'<div class="gi-audio-title">{label}</div>'
                 f'<div class="gi-audio-text">{item["text"]}</div>'
-                f'</div>',
+                + (f'<div class="gi-ipa">{_card_ipa}</div>'
+                   if _card_ipa else "")
+                + '</div>',
                 unsafe_allow_html=True)
             fmt = "audio/wav" if item["kind"] == "wav" else "audio/mpeg"
             st.audio(item["data"], format=fmt)
@@ -1127,26 +1148,49 @@ with col2:
                         unsafe_allow_html=True)
 
         # 逐字音韵分析（古韵模式，收进折叠面板）
-        if res["mode"] == "ancient" and res.get("reply"):
-            rows = analyze_reply(res["reply"])
-            if rows:
-                with st.expander(f"逐字音韵分析（{len(rows)} 字）"):
-                    trs = []
-                    for a in rows:
-                        tc = (f"tone-{a['tone']}"
-                              if any(t in a["tone"] for t in "平上去入") else "")
-                        tt = f'<span class="tone-tag {tc}">{a["tone"]}</span>'
-                        src_color = "#4a7a5a" if a["src"] == "收录" else "#9a917e"
-                        trs.append(
-                            f"<tr><td class=\"ch\">{a['char']}</td>"
-                            f"<td class=\"ipa\">{a['ipa']}</td>"
-                            f"<td>{tt}</td>"
-                            f"<td style=\"color:{src_color};font-size:0.75rem\">{a['src']}</td></tr>")
+        if res["mode"] == "ancient":
+            def _render_legacy_char_table(rows, title):
+                """东汉官音逐字表（字 | IPA | 韵 | 声调 | 来源）。
+
+                11/04 起加「韵」列：逐字标明具体韵部（如「质韵」「鱼韵(上)」）。
+                """
+                trs = []
+                for a in rows:
+                    tc = (f"tone-{a['tone']}"
+                          if any(t in a["tone"] for t in "平上去入") else "")
+                    tt = f'<span class="tone-tag {tc}">{a["tone"]}</span>'
+                    src_color = "#4a7a5a" if a["src"] == "收录" else "#9a917e"
+                    trs.append(
+                        f"<tr><td class=\"ch\">{a['char']}</td>"
+                        f"<td class=\"ipa\">{a['ipa']}</td>"
+                        f"<td>{a.get('final') or '—'}</td>"
+                        f"<td>{tt}</td>"
+                        f"<td style=\"color:{src_color};font-size:0.75rem\">{a['src']}</td></tr>")
+                with st.expander(title):
                     st.markdown(
                         '<table class="gi-phon"><thead><tr>'
-                        "<th>字</th><th>东汉 IPA</th><th>声调</th><th>来源</th>"
+                        "<th>字</th><th>东汉 IPA</th><th>韵</th><th>声调</th><th>来源</th>"
                         f"</tr></thead><tbody>{''.join(trs)}</tbody></table>",
                         unsafe_allow_html=True)
+
+            # ① 逐字 · 我的话（古汉语翻译）：与回答同一口径（11/04 起补上，
+            # 此前逐字对照只有回答；翻译逐字同样标明具体韵部）
+            u_text = ((res.get("translation") or "").strip()
+                      or (res.get("user") or "").strip())
+            if u_text:
+                u_rows = analyze_reply(u_text)
+                if u_rows:
+                    _render_legacy_char_table(
+                        u_rows,
+                        f"逐字音韵分析 · 我的话（{len(u_rows)} 字）")
+
+            # ② 逐字 · 回答
+            if res.get("reply"):
+                rows = analyze_reply(res["reply"])
+                if rows:
+                    _render_legacy_char_table(
+                        rows,
+                        f"逐字音韵分析（{len(rows)} 字）")
 
         # 对话历史（收进折叠面板）
         if st.session_state.turns:

@@ -9,7 +9,9 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-from phonology_db import lookup_char, EASTERN_HAN_DB
+from phonology_db import lookup_char, lookup_char_invariant, EASTERN_HAN_DB
+# lookup_char_invariant 已在 phonology_db 中实现并在此重新导出：
+# robot app 与 v3 界面共用同一字形无关口径。
 from sound_synth import synthesize_text, audio_to_wav_bytes, SAMPLE_RATE
 
 try:
@@ -95,7 +97,9 @@ def text_to_ipa(classical: str) -> AncientResult:
         elif ch.strip() and not _is_cjk(ch):
             continue
         elif ch.strip():
-            data = lookup_char(ch)
+            # 字形无关查表（11/04）：繁体输入按简体键命中同一条目，
+            # 简繁同音；真未收录才落拼音近似
+            matched, data = lookup_char_invariant(ch)
             if data:
                 coverage += 1
             else:

@@ -17,7 +17,7 @@ else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-from phonology_db import EASTERN_HAN_DB, lookup_char
+from phonology_db import EASTERN_HAN_DB, lookup_char_invariant
 from classical_translator import simple_translate
 from sound_synth import synthesize_text, audio_to_wav_bytes, audio_to_base64, SAMPLE_RATE, ESPEAK_AVAILABLE
 
@@ -106,13 +106,21 @@ def generate_edge_tts(text):
 @st.cache_data(show_spinner=False)
 def query_qieyun(char):
     if not QIEYUN_AVAILABLE: return None
+    # 字形无关：第三方《廣韻》表以繁体为键，简体输入先试其繁体形
+    candidates = [char]
     try:
-        result = 字頭2音韻地位_出處們(char)
-        if result:
-            entry = result[0]
-            if hasattr(entry, "__iter__") and len(entry) == 2: pos, _ = entry; return str(pos)
-            return str(entry)
-    except: pass
+        from language.polyphone import to_traditional
+        t = to_traditional(char)
+        if t and t != char: candidates.append(t)
+    except Exception: pass
+    for c in candidates:
+        try:
+            result = 字頭2音韻地位_出處們(c)
+            if result:
+                entry = result[0]
+                if hasattr(entry, "__iter__") and len(entry) == 2: pos, _ = entry; return str(pos)
+                return str(entry)
+        except: pass
     return None
 
 def process_input(inp, skip_translate=False, pitch=130):
@@ -127,7 +135,8 @@ def process_input(inp, skip_translate=False, pitch=130):
         elif ch in '，、；：':
             ipa_parts.append(",")
         elif ch.strip() and ch not in '""\'\'（）—…·':
-            data = lookup_char(ch)
+            # 字形无关：东汉表以简体为键，繁体输入（東）同简体（东）命中同一条
+            _, data = lookup_char_invariant(ch)
             if not data:
                 py = get_pinyin_fallback(ch)
                 est_ipa = estimate_ipa_from_pinyin(py) if py else None

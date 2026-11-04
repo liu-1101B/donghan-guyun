@@ -713,5 +713,28 @@ EASTERN_HAN_DB = {
 def lookup_char(char):
     return EASTERN_HAN_DB.get(char)
 
+def lookup_char_invariant(char):
+    """东汉实验字表的字形无关查找：原字 → 繁体→简体 → 简体→繁体。
+
+    字表以简体为键（703 字中 701 字），但输入可能是繁体（「東」应同「东」
+    读 tuŋ，不能因字形不同落拼音近似层）；反向（表内键为繁体，如「麴」）
+    同样兜底。简繁同字同音，查不到只是字表未收录，与字形无关。
+    返回 (命中字形, 条目)；未收录返回 (None, None)。
+    """
+    data = EASTERN_HAN_DB.get(char)
+    if data:
+        return char, data
+    # 懒加载：legacy 全命中时不引入 polyphone 的重依赖（jieba 等）
+    try:
+        from language.polyphone import to_simplified, to_traditional
+    except Exception:
+        return None, None
+    for alt in (to_simplified(char), to_traditional(char)):
+        if alt != char:
+            data = EASTERN_HAN_DB.get(alt)
+            if data:
+                return alt, data
+    return None, None
+
 def get_all_known_chars():
     return set(EASTERN_HAN_DB.keys())

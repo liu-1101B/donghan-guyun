@@ -34,10 +34,10 @@ Copy-Item -Recurse -Force espeak-ng\* dist\古韵机器人\_internal\espeak-ng
 # 3) 放两个 bat + 使用说明（内容见「发行包组成」）
 
 # 4) 打 zip（用系统自带的 tar.exe，比 Compress-Archive 快得多）
-tar.exe -a -c -f dist\古韵机器人_v4.0.0_windows_x64.zip -C dist 古韵机器人
+tar.exe -a -c -f dist\古韵机器人_v4.1.0_windows_x64.zip -C dist 古韵机器人
 ```
 
-体积参考：目录约 480 MB（streamlit + numpy/scipy + onnxruntime），zip 约 188 MB。
+体积参考：目录约 480 MB（streamlit + numpy/scipy + onnxruntime），zip 约 188 MB（v4.0.0）/ 约 237 MB（v4.1.0，pyarrow/scipy 版本更大）。
 
 ## 发行包组成
 

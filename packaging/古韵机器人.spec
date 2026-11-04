@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller 规格文件：古韵机器人 v4.0.0（Windows 便携版，onedir）。
+"""PyInstaller 规格文件：古韵机器人 v4.1.0（Windows 便携版，onedir）。
 
 用法（在 packaging 目录下）：
     python -m PyInstaller --noconfirm --clean 古韵机器人.spec
@@ -54,6 +54,7 @@ hiddenimports += [
     "robot.session", "robot.voice_router",
     "services.asr_client", "services.llm_client", "services.tts_client",
     "language.ancient_tts", "language.turn_engine", "language.style_prompt",
+    "language.polyphone",
 ]
 
 a = Analysis(
