@@ -12,6 +12,7 @@ on:
       - "tests/test_windows_audio.py"
       - "tests/test_llm_provider.py"
       - "tests/test_robot_app_smoke.py"
+      - "tests/test_ancient_tts_provenance.py"
       - "requirements-robot.txt"
       - ".github/workflows/windows-compat-tests.yml"
   pull_request:
@@ -38,6 +39,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_windows_audio.py" -v
       - name: Run LLM provider selection tests
         run: python -m unittest discover -s tests -p "test_llm_provider.py" -v
+      - name: Run historical phonology provenance tests
+        run: python -m unittest discover -s tests -p "test_ancient_tts_provenance.py" -v
       - name: Smoke-test Windows platform dispatch
         if: runner.os == 'Windows'
         run: |
