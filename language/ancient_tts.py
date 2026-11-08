@@ -70,22 +70,27 @@ def _is_cjk(ch):
 @dataclass
 class AncientResult:
     ipa_text: str
-    coverage: int          # 已收录字数
-    approx: int            # 拼音近似字数
+    coverage: int
+    approx: int
     unknown: list = field(default_factory=list)
+    entries: list = field(default_factory=list)
 
     @property
     def total(self):
-        return self.coverage + self.approx
+        return self.coverage + self.approx + len(self.unknown)
 
     @property
     def coverage_pct(self):
         return round(100 * self.coverage / self.total, 1) if self.total else 0.0
 
 
-def text_to_ipa(classical: str) -> AncientResult:
-    """文言文 → IPA 序列（标点转停顿），并统计覆盖率"""
-    ipa_parts, unknown = [], []
+def text_to_ipa(classical: str, *, allow_pinyin_approx: bool = False) -> AncientResult:
+    """Convert text to IPA; modern-Mandarin fallback is explicit opt-in only."""
+    from language.provenance import (
+        get_legacy_entry_provenance,
+        modern_pinyin_approximation_provenance,
+    )
+    ipa_parts, unknown, entries = [], [], []
     coverage = approx = 0
     for ch in classical:
         if ch in '。！？':
@@ -98,39 +103,41 @@ def text_to_ipa(classical: str) -> AncientResult:
             data = lookup_char(ch)
             if data:
                 coverage += 1
-            else:
+                ipa = data['ipa']
+                entries.append({'character': ch, 'ipa': ipa, 'status': 'recorded',
+                                'provenance': get_legacy_entry_provenance(ch).to_dict()})
+            elif allow_pinyin_approx:
                 py = get_pinyin_fallback(ch)
-                est = estimate_ipa_from_pinyin(py) if py else None
-                if est:
+                ipa = estimate_ipa_from_pinyin(py) if py else None
+                if ipa:
                     approx += 1
-                    data = {'ipa': est}
+                    entries.append({
+                        'character': ch, 'ipa': ipa,
+                        'status': 'modern_pinyin_approximation',
+                        'provenance': modern_pinyin_approximation_provenance().to_dict(),
+                    })
                 else:
                     unknown.append(ch)
+                    entries.append({'character': ch, 'ipa': None,
+                                    'status': 'missing', 'provenance': None})
                     continue
-            ipa_parts.append(data['ipa'])
-        # 引号括号等直接跳过
-    # 过滤含中文字符的非法片段
-    clean = [p for p in ipa_parts
-             if not any(_is_cjk(c) for c in p)]
-    return AncientResult(
-        ipa_text=' '.join(clean),
-        coverage=coverage,
-        approx=approx,
-        unknown=unknown,
-    )
+            else:
+                unknown.append(ch)
+                entries.append({'character': ch, 'ipa': None,
+                                'status': 'missing', 'provenance': None})
+                continue
+            ipa_parts.append(ipa)
+    clean = [p for p in ipa_parts if not any(_is_cjk(c) for c in p)]
+    return AncientResult(ipa_text=' '.join(clean), coverage=coverage,
+                         approx=approx, unknown=unknown, entries=entries)
 
 
 def synthesize_ancient(classical: str, pitch: int = 130,
-                       speed: float = 1.0) -> tuple:
-    """文言文 → (WAV bytes, AncientResult)。空文本返回 (b'', result)
-
-    pitch: 基频 Hz（音色高低）
-    speed: 语速倍率，1.0 正常；<1 更慢（字间停顿加大），>1 更快
-    """
-    result = text_to_ipa(classical)
+                       speed: float = 1.0,
+                       allow_pinyin_approx: bool = False) -> tuple:
+    result = text_to_ipa(classical, allow_pinyin_approx=allow_pinyin_approx)
     if not result.ipa_text.strip():
         return b'', result
-    # 语速 → 字间停顿：正常 0.08s，放慢到 0.20s，加快到 0.03s
     word_gap = max(0.03, min(0.20, 0.08 / max(0.4, speed)))
     audio = synthesize_text(result.ipa_text, word_gap=word_gap, pitch=pitch)
     if audio is None or len(audio) == 0:
@@ -138,13 +145,10 @@ def synthesize_ancient(classical: str, pitch: int = 130,
     return audio_to_wav_bytes(audio, SAMPLE_RATE), result
 
 
-def db_coverage(classical: str) -> dict:
-    """统计一段文字在音韵库中的覆盖情况（不合成）"""
-    r = text_to_ipa(classical)
+def db_coverage(classical: str, *, allow_pinyin_approx: bool = False) -> dict:
+    r = text_to_ipa(classical, allow_pinyin_approx=allow_pinyin_approx)
     return {
-        'total': r.total,
-        'covered': r.coverage,
-        'approx': r.approx,
-        'pct': r.coverage_pct,
-        'unknown': r.unknown,
+        'total': r.total, 'covered': r.coverage, 'approx': r.approx,
+        'pct': r.coverage_pct, 'unknown': r.unknown, 'entries': r.entries,
+        'allow_pinyin_approx': allow_pinyin_approx,
     }

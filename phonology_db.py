@@ -713,5 +713,19 @@ EASTERN_HAN_DB = {
 def lookup_char(char):
     return EASTERN_HAN_DB.get(char)
 
+
+def lookup_char_record(char):
+    """Return the legacy reading together with evidence metadata."""
+    data = lookup_char(char)
+    if data is None:
+        return None
+    from language.provenance import get_legacy_entry_provenance
+    return {
+        "character": char,
+        "reading": dict(data),
+        "provenance": get_legacy_entry_provenance(char).to_dict(),
+    }
+
+
 def get_all_known_chars():
     return set(EASTERN_HAN_DB.keys())

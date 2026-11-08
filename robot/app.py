@@ -21,6 +21,7 @@ import time
 import base64
 import threading
 import json
+import html
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -156,6 +157,14 @@ def _persist_llm_mode():
         mode = "dictionary"
     preferences = _load_robot_preferences()
     preferences["llm_mode"] = mode
+    _save_robot_preferences(preferences)
+
+
+def _persist_pinyin_approx():
+    preferences = _load_robot_preferences()
+    preferences["allow_pinyin_approx"] = bool(
+        st.session_state.get("robot_allow_pinyin_approx", False)
+    )
     _save_robot_preferences(preferences)
 
 
@@ -311,11 +320,13 @@ def _gen_worker(job, session, cfg):
 
         def _do_user():
             return "user", synthesize_ancient(
-                user_text, pitch=cfg["pitch"], speed=cfg["speed"])
+                user_text, pitch=cfg["pitch"], speed=cfg["speed"],
+                allow_pinyin_approx=cfg.get("allow_pinyin_approx", False))
 
         def _do_reply_anc():
             return "reply_anc", synthesize_ancient(
-                reply, pitch=cfg["pitch"], speed=cfg["speed"])
+                reply, pitch=cfg["pitch"], speed=cfg["speed"],
+                allow_pinyin_approx=cfg.get("allow_pinyin_approx", False))
 
         def _do_reply_mod():
             # 现代汉语只做真 Edge TTS（断网则该段为空），绝不共振峰兜底
@@ -342,8 +353,9 @@ def _gen_worker(job, session, cfg):
                 else:
                     done["reply_mod"] = (val or b"", None)
                 job["phase"] = f"synth_{key}"
-        (wav_u, _), (wav_r, result_r), (mp3_m, _) = (
+        (wav_u, result_u), (wav_r, result_r), (mp3_m, _) = (
             done["user"], done["reply_anc"], done["reply_mod"])
+        phonology_result = result_r or result_u
         if reply and not wav_r:
             source = f"{source}+ancient_fallback"
 
@@ -354,8 +366,10 @@ def _gen_worker(job, session, cfg):
             "reply_modern": reply_modern,
             "source": source,
             "mode": cfg["mode"],
-            "coverage": result_r.coverage_pct if result_r and wav_r else 0.0,
-            "approx": result_r.approx if result_r and wav_r else 0,
+            "coverage": phonology_result.coverage_pct if phonology_result else 0.0,
+            "approx": phonology_result.approx if phonology_result else 0,
+            "unknown": list(phonology_result.unknown) if phonology_result else [],
+            "allow_pinyin_approx": bool(cfg.get("allow_pinyin_approx", False)),
             "audios": {
                 "user": {"data": wav_u, "kind": "wav", "text": user_text},
                 "reply_anc": {"data": wav_r, "kind": "wav", "text": reply},
@@ -466,23 +480,37 @@ if st.session_state.get("_changed_mods"):
 
 
 # ---------- 音韵分析（逐字，供表格展示） ----------
-def analyze_reply(classical: str):
+def analyze_reply(classical: str, allow_pinyin_approx: bool = False):
+    from language.provenance import (
+        get_legacy_entry_provenance, modern_pinyin_approximation_provenance,
+    )
     rows = []
     for ch in classical:
         if not ch.strip() or ch in '。！？，、；：""''（）…—·':
             continue
         data = lookup_char(ch)
         if data:
-            rows.append({"char": ch, "ipa": data["ipa"],
-                         "tone": data.get("tone", ""),
-                         "src": "收录"})
-        else:
+            evidence = get_legacy_entry_provenance(ch)
+            rows.append({
+                "char": ch, "ipa": data["ipa"], "tone": data.get("tone", ""),
+                "src": "项目实验条目·来源待核", "evidence": evidence.note,
+            })
+            continue
+        if allow_pinyin_approx:
             from language.ancient_tts import get_pinyin_fallback, estimate_ipa_from_pinyin
             py = get_pinyin_fallback(ch)
             ipa = estimate_ipa_from_pinyin(py) if py else None
             if ipa:
-                rows.append({"char": ch, "ipa": ipa,
-                             "tone": "今音", "src": "拼音近似"})
+                evidence = modern_pinyin_approximation_provenance()
+                rows.append({
+                    "char": ch, "ipa": ipa, "tone": "今音",
+                    "src": "现代拼音近似·非历史重构", "evidence": evidence.note,
+                })
+                continue
+        rows.append({
+            "char": ch, "ipa": None, "tone": "",
+            "src": "缺失·未补读", "evidence": "无可用历史音韵记录",
+        })
     return rows
 
 
@@ -692,6 +720,10 @@ if "last_result" not in st.session_state:
 
 # 首次进入时使用合理默认值并保存；之后始终读取本机上次选择。
 _preferences = _load_robot_preferences()
+if "robot_allow_pinyin_approx" not in st.session_state:
+    st.session_state["robot_allow_pinyin_approx"] = bool(
+        _preferences.get("allow_pinyin_approx", False)
+    )
 if "llm_mode" not in st.session_state:
     _stored_mode = _preferences.get("llm_mode")
     if _stored_mode not in LLM_MODE_LABELS:
@@ -892,6 +924,13 @@ with col1:
             st.slider("基频（Hz，越低越沉）", 80, 180, int(router.pitch), 5,
                       key="robot_pitch")
             st.caption("语速与基频仅东汉古韵模式生效。")
+            st.checkbox(
+                "允许现代拼音近似补读",
+                key="robot_allow_pinyin_approx",
+                on_change=_persist_pinyin_approx,
+                help=("默认关闭。开启后，未收录字会用现代普通话拼音作占位近似；"
+                      "这些读音不是东汉重构，结果中会单独标明。"),
+            )
 
     def _generate():
         """登记后台任务并立即返回（LLM+TTS 在后台线程跑，
@@ -917,6 +956,7 @@ with col1:
             "rate": f"{int(ss.get('robot_rate', -10)):+d}%",
             "speed": float(ss.get("robot_speed", 1.0)),
             "pitch": int(ss.get("robot_pitch", router.pitch)),
+            "allow_pinyin_approx": bool(ss.get("robot_allow_pinyin_approx", False)),
         }
         # 同步 router（供扩展朗读按钮复用当前设置）
         router.set_mode(mode)
@@ -940,7 +980,7 @@ with col1:
     with st.expander("关于本项目"):
         st.markdown(f"""- 对话模式：大模型 API / 本地词典（可在左侧切换并记住上次选择）
 - 无 API 或 API 不可用时：只使用词典预设应答；未匹配则只朗读输入的古汉语翻译
-- 东汉古韵库：{len(EASTERN_HAN_DB)} 字（郑张尚芳体系，洛阳官音重建）
+- 东汉古韵库：{len(EASTERN_HAN_DB)} 字（项目实验字表；来源与推导待逐字核验）
 - 自然语音：Edge TTS（需网络，失败时可回退古韵合成）
 - 音频设备：Linux 使用 PipeWire/ALSA，Windows 使用系统音频设备
 - 多轮对话：保留最近 {session.max_turns} 轮有效回答上下文""")
@@ -1046,17 +1086,26 @@ with col2:
         if res["mode"] == "ancient":
             meta += f' · 古韵覆盖 {res["coverage"]}%'
         st.markdown(f'<div class="gi-meta">{meta}</div>', unsafe_allow_html=True)
+        if res["mode"] == "ancient":
+            if res.get("approx", 0):
+                st.warning(
+                    f'本轮有 {res["approx"]} 个字使用了现代拼音近似；'
+                    '这些音不属于东汉历史重构。'
+                )
+            missing = sorted(set(res.get("unknown") or []))
+            if missing:
+                st.info("以下字没有可用的东汉实验字条，未生成历史读音：" + "、".join(missing))
 
         if res["translation"]:
-            st.markdown(f'<div class="gi-muteline">我的话 · 古汉语：{res["translation"]}</div>',
+            st.markdown(f'<div class="gi-muteline">我的话 · 古汉语：{html.escape(res["translation"])}</div>',
                         unsafe_allow_html=True)
         if res.get("reply"):
-            st.markdown(f'<div class="gi-classical">{res["reply"]}</div>',
+            st.markdown(f'<div class="gi-classical">{html.escape(res["reply"])}</div>',
                         unsafe_allow_html=True)
         elif res.get("source") == "local-dictionary-miss":
             st.info("本地词典没有匹配到应答。本轮不生成回答，只播放输入内容的古汉语翻译。")
         if res.get("reply_modern") and res["reply_modern"] != res["reply"]:
-            st.markdown(f'<div class="gi-muteline">白话：{res["reply_modern"]}</div>',
+            st.markdown(f'<div class="gi-muteline">白话：{html.escape(res["reply_modern"])}</div>',
                         unsafe_allow_html=True)
 
         # 三段音频（每次生成都产出：我的话·古韵 / 回答·古韵 / 回答·现代）
@@ -1093,7 +1142,7 @@ with col2:
             st.markdown(
                 f'<div class="gi-audio-card">'
                 f'<div class="gi-audio-title">{label}</div>'
-                f'<div class="gi-audio-text">{item["text"]}</div>'
+                f'<div class="gi-audio-text">{html.escape(item["text"])}</div>'
                 f'</div>',
                 unsafe_allow_html=True)
             fmt = "audio/wav" if item["kind"] == "wav" else "audio/mpeg"
@@ -1120,7 +1169,10 @@ with col2:
 
         # 东汉 IPA（古韵模式）
         if res["mode"] == "ancient" and res.get("reply"):
-            r = text_to_ipa(res["reply"])
+            r = text_to_ipa(
+                res["reply"],
+                allow_pinyin_approx=res.get("allow_pinyin_approx", False),
+            )
             st.markdown('<div class="gi-h">东汉洛阳音 IPA</div>',
                         unsafe_allow_html=True)
             st.markdown(f'<div class="gi-ipa">{r.ipa_text}</div>',
@@ -1128,7 +1180,10 @@ with col2:
 
         # 逐字音韵分析（古韵模式，收进折叠面板）
         if res["mode"] == "ancient" and res.get("reply"):
-            rows = analyze_reply(res["reply"])
+            rows = analyze_reply(
+                res["reply"],
+                allow_pinyin_approx=res.get("allow_pinyin_approx", False),
+            )
             if rows:
                 with st.expander(f"逐字音韵分析（{len(rows)} 字）"):
                     trs = []
@@ -1136,15 +1191,19 @@ with col2:
                         tc = (f"tone-{a['tone']}"
                               if any(t in a["tone"] for t in "平上去入") else "")
                         tt = f'<span class="tone-tag {tc}">{a["tone"]}</span>'
-                        src_color = "#4a7a5a" if a["src"] == "收录" else "#9a917e"
+                        src_color = ("#4a7a5a" if a["src"].startswith("项目实验")
+                                     else "#b08a3e" if "近似" in a["src"]
+                                     else "#a63d2a")
+                        import html as _html
                         trs.append(
-                            f"<tr><td class=\"ch\">{a['char']}</td>"
-                            f"<td class=\"ipa\">{a['ipa']}</td>"
+                            f"<tr><td class=\"ch\">{_html.escape(a['char'])}</td>"
+                            f"<td class=\"ipa\">{_html.escape(a['ipa'] or '—')}</td>"
                             f"<td>{tt}</td>"
-                            f"<td style=\"color:{src_color};font-size:0.75rem\">{a['src']}</td></tr>")
+                            f"<td style=\"color:{src_color};font-size:0.75rem\">{_html.escape(a['src'])}</td>"
+                            f"<td>{_html.escape(a['evidence'])}</td></tr>")
                     st.markdown(
                         '<table class="gi-phon"><thead><tr>'
-                        "<th>字</th><th>东汉 IPA</th><th>声调</th><th>来源</th>"
+                        "<th>字</th><th>IPA</th><th>声调</th><th>记录状态</th><th>依据状态</th>"
                         f"</tr></thead><tbody>{''.join(trs)}</tbody></table>",
                         unsafe_allow_html=True)
 
@@ -1153,9 +1212,9 @@ with col2:
             with st.expander(f"对话历史（{len(st.session_state.turns)} 轮）"):
                 for u, a, m in reversed(st.session_state.turns[-6:]):
                     st.markdown(
-                        f'<div class="gi-hist"><span class="u">{u}</span><br>'
-                        f'<span class="a">{a}</span>'
-                        f'<span class="m">{m}</span></div>',
+                        f'<div class="gi-hist"><span class="u">{html.escape(u)}</span><br>'
+                        f'<span class="a">{html.escape(a)}</span>'
+                        f'<span class="m">{html.escape(m)}</span></div>',
                         unsafe_allow_html=True)
                 if st.button("清空历史", key="clear_hist"):
                     session.reset()
